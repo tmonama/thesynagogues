@@ -244,7 +244,7 @@
   <div class="page-hero__content">
     <p class="page-hero__eyebrow">Sow a Seed</p>
     <h1>Give</h1>
-    <p>Support the work of God.</p>
+    <p>Your giving is an act of worship. Every seed sown into the Kingdom carries a harvest.</p>
   </div>
 </div>
 
@@ -346,13 +346,7 @@
 
           <!-- Cloudflare Turnstile -->
           <div id="turnstileWidget" style="margin-bottom:14px;min-height:65px;display:flex;align-items:center;justify-content:center;">
-            <div class="cf-turnstile"
-              data-sitekey="0x4AAAAAABkz2Q6v7Pj1Xk3a"
-              data-theme="light"
-              data-size="flexible"
-              data-callback="onTurnstileSuccess"
-              data-expired-callback="onTurnstileExpired">
-            </div>
+<div id="turnstileContainer"></div>
           </div>
 
           <!-- Submit -->
@@ -373,7 +367,7 @@
           </div>
           <p class="give-success__title">Thank you!</p>
           <p class="give-success__text">
-            Your gift has been received and you will get an email confirmation shortly. May God bless you for your gift.
+            Your gift has been received and you will get an email confirmation shortly. May God bless you for your faithfulness.
           </p>
           <p class="give-success__ref" id="successRef"></p>
           <a href="give.html" class="btn btn--outline-dark" style="margin-top:24px;font-size:13px">Give Again</a>
@@ -464,6 +458,46 @@ const API = 'https://campushub-api.onrender.com/api/giving/public-initiate';
 let selectedFund   = 'tithe';
 let selectedAmount = 200;
 let recurring      = false;
+let turnstileToken = null;
+
+// ── Turnstile — site key fetched from backend, nothing hardcoded ──────────────
+async function initTurnstile() {
+  try {
+    const res     = await fetch('https://campushub-api.onrender.com/api/config/public');
+    const data    = await res.json();
+    const siteKey = data.turnstileSiteKey;
+
+    if (!siteKey) {
+      // Not configured on server — hide widget and allow form through
+      console.info('[Turnstile] Not configured — skipping.');
+      turnstileToken = 'not-configured';
+      const w = document.getElementById('turnstileWidget');
+      if (w) w.style.display = 'none';
+      return;
+    }
+
+    // Wait for Turnstile SDK to be ready
+    await new Promise(resolve => {
+      const poll = () => window.turnstile ? resolve() : setTimeout(poll, 80);
+      poll();
+    });
+
+    window.turnstile.render('#turnstileContainer', {
+      sitekey:            siteKey,
+      theme:              'light',
+      size:               'flexible',
+      callback:           (token) => { turnstileToken = token; },
+      'expired-callback': ()      => { turnstileToken = null; },
+    });
+  } catch (err) {
+    console.warn('[Turnstile] Config fetch failed:', err.message);
+    // Fail open — don't block givers if backend is cold-starting
+    turnstileToken = 'config-error';
+    const w = document.getElementById('turnstileWidget');
+    if (w) w.style.display = 'none';
+  }
+}
+initTurnstile();
 
 // ── Fund selector ────────────────────────────────────────────────
 document.querySelectorAll('.fund-btn').forEach(btn => {
