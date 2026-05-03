@@ -144,12 +144,26 @@
     }
     .episode:hover { border-color:var(--green);box-shadow:0 4px 20px rgba(69,106,2,0.08); }
     .episode.playing { background:var(--green-pale);border-color:var(--green); }
-    .episode__num {
-      width:52px;height:52px;flex-shrink:0;border-radius:var(--r-md);
-      display:flex;align-items:center;justify-content:center;
-      font-family:var(--font-display);font-size:20px;font-weight:400;
-      transition:all 0.2s;
+    .episode__cover {
+      width:64px;height:64px;min-width:64px;flex-shrink:0;
+      border-radius:var(--r-md);overflow:hidden;position:relative;
+      background:var(--green-pale);
     }
+    .episode__cover img {
+      width:64px;height:64px;min-width:64px;
+      object-fit:cover;display:block;
+      transition:transform 0.3s;
+    }
+    .episode:hover .episode__cover img { transform:scale(1.06); }
+    .episode__cover-overlay {
+      position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+      background:rgba(0,0,0,0);transition:background 0.2s;
+    }
+    .episode:hover .episode__cover-overlay,
+    .episode.playing .episode__cover-overlay { background:rgba(0,0,0,0.42); }
+    .episode__cover-overlay svg { opacity:0;transition:opacity 0.2s; }
+    .episode:hover .episode__cover-overlay svg,
+    .episode.playing .episode__cover-overlay svg { opacity:1; }
     .episode__info { flex:1;min-width:0; }
     .episode__title { font-size:15px;font-weight:500;color:var(--text);margin-bottom:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap; }
     .episode__meta { font-size:12px;color:var(--text-muted); }
@@ -343,10 +357,13 @@ async function loadEpisodes() {
     if (json.status !== 'ok') throw new Error(json.message || 'Feed error');
 
     // Set podcast cover image from feed
+    let feedCover = '';
     if (json.feed && json.feed.image) {
+      feedCover = json.feed.image;
       const img = document.getElementById('podcastCoverImg');
-      if (img) img.src = json.feed.image;
+      if (img) img.src = feedCover;
     }
+    window._feedCover = feedCover;
 
     const items = json.items || [];
     countEl.textContent = items.length + '+';
@@ -359,6 +376,7 @@ async function loadEpisodes() {
       duration:    item.enclosure?.duration || '',
       audio_url:   item.enclosure?.link || '',
       episode_num: String(items.length - i),
+      thumbnail:   item.thumbnail || item.enclosure?.thumbnail || json.feed?.image || '',
     }));
 
     renderEpisodes(episodes);
@@ -383,11 +401,16 @@ function renderEpisodes(eps) {
   }
   listEl.innerHTML = eps.slice(0,50).map(ep => `
     <div class="episode${activeEp?.id===ep.id?' playing':''}" data-id="${ep.id}">
-      <div class="episode__num" style="background:${activeEp?.id===ep.id?'var(--green)':'var(--green-pale)'};color:${activeEp?.id===ep.id?'white':'var(--green)'}">
-        ${activeEp?.id===ep.id && isPlaying
-          ? '<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16" rx="1"/><rect x="14" y="4" width="4" height="16" rx="1"/></svg>'
-          : (ep.episode_num || ep.id + 1)
-        }
+      <div class="episode__cover">
+        <img src="${ep.thumbnail || window._feedCover || ''}"
+             alt="${ep.title}"
+             onerror="if(window._feedCover)this.src=window._feedCover"/>
+        <div class="episode__cover-overlay">
+          ${activeEp?.id===ep.id && isPlaying
+            ? '<svg width="20" height="20" viewBox="0 0 24 24" fill="white"><rect x="6" y="4" width="4" height="16" rx="1"/><rect x="14" y="4" width="4" height="16" rx="1"/></svg>'
+            : '<svg width="20" height="20" viewBox="0 0 24 24" fill="white"><polygon points="5 3 19 12 5 21 5 3"/></svg>'
+          }
+        </div>
       </div>
       <div class="episode__info">
         <div class="episode__title">${ep.title}</div>
