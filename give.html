@@ -488,6 +488,13 @@ async function initTurnstile() {
       size:               'flexible',
       callback:           (token) => { turnstileToken = token; },
       'expired-callback': ()      => { turnstileToken = null; },
+      'error-callback':   ()      => {
+        // Widget failed (e.g. CSP, network) — fail open so giving still works
+        console.warn('[Turnstile] Widget error — failing open');
+        turnstileToken = 'widget-error';
+        const w = document.getElementById('turnstileWidget');
+        if (w) w.style.display = 'none';
+      },
     });
   } catch (err) {
     console.warn('[Turnstile] Config fetch failed:', err.message);
@@ -559,7 +566,7 @@ async function initiateGiving() {
   if (amount > 50000) return showErr('Maximum online giving is R50,000. For larger gifts please email info@thesynagogues.com');
   if (!firstName || !lastName) return showErr('Please enter your first and last name.');
   if (!email || !/\S+@\S+\.\S+/.test(email)) return showErr('Please enter a valid email address.');
-  if (!turnstileToken) return showErr('Please complete the security check before proceeding.');
+  if (!turnstileToken) return showErr('Please complete the security check above before proceeding. If the check is not appearing, try refreshing the page.');
 
   try {
     const res  = await fetch(API, {
