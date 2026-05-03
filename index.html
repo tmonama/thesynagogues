@@ -8,7 +8,6 @@
   <link rel="stylesheet" href="styles.css"/>
   <style>
     /* ── Hero ── */
-    /* Hide gradient bg elements — video is the background now */
     .hero__bg, .hero__orbs { display: none !important; }
 
     .hero__video {
@@ -16,8 +15,14 @@
       width: 100%; height: 100%;
       object-fit: cover; object-position: center 30%;
       filter: brightness(0.52) saturate(1.2);
-      z-index: 1;
+      z-index: 1 !important;
     }
+    /* Overlays sit above video */
+    .hero__haze  { z-index: 2 !important; }
+    .hero__grain { z-index: 2 !important; }
+    /* Content sits above everything */
+    .hero__inner  { position: relative !important; z-index: 10 !important; }
+    .hero__scroll { z-index: 10 !important; }
     .hero {
       min-height: 100vh;
       position: relative;
