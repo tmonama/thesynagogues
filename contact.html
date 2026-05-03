@@ -34,7 +34,7 @@
 
     /* Status messages */
     .form-status { display:none; padding:14px 16px; border-radius:var(--r-md); margin-bottom:16px; font-size:14px; }
-    .form-status--error { background:#fff0f0; border:1px solid #f0c0c0; color:#c00; display:flex; align-items:center; gap:8px; }
+    .form-status--error { background:#fff0f0; border:1px solid #f0c0c0; color:#c00; align-items:center; gap:8px; }
     .form-status--success { flex-direction:column; align-items:center; padding:40px; text-align:center; }
     .form-success-icon { width:64px; height:64px; border-radius:50%; background:var(--green-pale); display:flex; align-items:center; justify-content:center; margin:0 auto 16px; }
     .form-success-title { font-family:var(--font-display); font-size:26px; font-weight:400; color:var(--green); margin-bottom:10px; }
@@ -93,7 +93,7 @@
         <h2>We'd love to hear from you</h2>
         <p>Whether you have a question, want to connect, or just need someone to talk to — our team is here.</p>
 
-        <div id="formError" class="form-status form-status--error">
+        <div id="formError" class="form-status form-status--error" style="display:none">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
           <span id="formErrorText"></span>
         </div>
@@ -133,7 +133,7 @@
           </button>
         </div>
 
-        <div class="form-status form-status--success" id="formSuccess">
+        <div class="form-status form-status--success" id="formSuccess" style="display:none">
           <div class="form-success-icon">
             <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
           </div>
@@ -172,7 +172,7 @@
             <h3 class="info-card__heading">Service Times</h3>
           </div>
           <p class="info-card__text">
-            <strong>Friday Night Prayer</strong> — 18:00<br>
+            <strong>Friday Night Prayer</strong> — 19:00<br>
             <strong>Sunday Service</strong> — 10:00<br>
             <strong>7th Week Special</strong> — 10:00
           </p>
@@ -212,7 +212,7 @@
         <div class="campus-info-card__name">The Synagogues JWC</div>
         <div class="campus-info-card__detail">Langrand Road<br>Vereeniging, Gauteng, 1929</div>
         <div class="campus-info-card__times">
-          <div class="time-item"><span class="time-item__day">Friday</span><span class="time-item__time">18:00 — Prayer</span></div>
+          <div class="time-item"><span class="time-item__day">Friday</span><span class="time-item__time">19:00 — Prayer</span></div>
           <div class="time-item"><span class="time-item__day">Sunday</span><span class="time-item__time">10:00 — Service</span></div>
         </div>
         <a href="https://maps.google.com/?q=Langrand+Road+Vereeniging" target="_blank" class="btn btn--outline-dark" style="margin-top:20px;font-size:12px">
@@ -229,7 +229,7 @@
         <div class="campus-info-card__name">The Synagogues Pretoria East</div>
         <div class="campus-info-card__detail">Pretoria, Gauteng<br><br>Alwyn Rd, Nellmapius<br>Pretoria, 0122<br><br><a href="https://share.google/oLDRGDn830eMPveHd" target="_blank" style="color:var(--green)">Get directions ↗</a></div>
         <div class="campus-info-card__times">
-          <div class="time-item"><span class="time-item__day">Friday</span><span class="time-item__time">18:00 — Prayer</span></div>
+          <div class="time-item"><span class="time-item__day">Friday</span><span class="time-item__time">19:00 — Prayer</span></div>
           <div class="time-item"><span class="time-item__day">Sunday</span><span class="time-item__time">10:00 — Service</span></div>
         </div>
         <a href="https://share.google/oLDRGDn830eMPveHd" target="_blank" class="btn btn--outline-dark" style="margin-top:20px;font-size:12px">
@@ -254,7 +254,7 @@
 <div id="footer-placeholder"></div>
 <script src="layout.js"></script><script src="nav.js"></script>
 <script>
-const API = 'https://campushub-api.onrender.com/api/contact';
+const API = '/api/contact';
 
 async function submitForm() {
   const btn      = document.getElementById('submitBtn');

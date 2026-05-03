@@ -453,7 +453,7 @@
 <script src="layout.js"></script>
 <script src="nav.js"></script>
 <script>
-const API = 'https://campushub-api.onrender.com/api/giving/public-initiate';
+const API = '/api/giving/public-initiate';
 
 let selectedFund   = 'tithe';
 let selectedAmount = 200;
@@ -463,7 +463,7 @@ let turnstileToken = null;
 // ── Turnstile — site key fetched from backend, nothing hardcoded ──────────────
 async function initTurnstile() {
   try {
-    const res     = await fetch('https://campushub-api.onrender.com/api/config/public');
+    const res     = await fetch('/api/config/public');
     const data    = await res.json();
     const siteKey = data.turnstileSiteKey;
 
