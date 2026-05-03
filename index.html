@@ -358,11 +358,12 @@
 
 <!-- ── HERO ───────────────────────────────────────────────────────────────── -->
 <section class="hero">
-  <!-- Tree video background -->
+  <!-- Self-hosted hero video — place file at assets/hero.mp4 -->
   <video class="hero__video"
-    src="https://videos.pexels.com/video-files/856973/856973-uhd_2560_1440_25fps.mp4"
-    autoplay loop muted playsinline
-    poster="https://images.pexels.com/videos/856973/free-video-856973.jpg?auto=compress&cs=tinysrgb&fit=crop&h=630&w=1200">
+    autoplay loop muted playsinline preload="auto"
+    poster="assets/hero-poster.jpg"
+    onerror="this.style.display='none'">
+    <source src="assets/hero.mp4" type="video/mp4"/>
   </video>
   <div class="hero__bg"></div>
   <div class="hero__orbs">
@@ -381,7 +382,7 @@
     <h1 class="hero__title anim-up-2">
       The<br><em>Synagogues</em>
     </h1>
-    <p class="hero__subtitle anim-up-3">Vereeniging · Pretoria</p>
+    <p class="hero__subtitle anim-up-3">Vereeniging · Pretoria · Sonlandpark</p>
 
     <p class="hero__verse anim-up-3">
       "My house shall be called a house of prayer for all nations."<br>
