@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Give — The Synagogues JWC</title>
+  <meta name="description" content="Give online to The Synagogues JWC. Tithes, offerings, building fund, missions and more — secure payment via PayFast."/>
+  <link rel="stylesheet" href="styles.css"/>
+  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+  <style>
+    /* ── Give page layout ── */
+    .give-section {
+      padding: clamp(80px,10vw,120px) 0;
+      min-height: 60vh;
+    }
+    .give-grid {
+      display: grid;
+      grid-template-columns: 1.1fr 1fr;
+      gap: clamp(48px,8vw,80px);
+      align-items: start;
+    }
+
+    /* ── Give form card ── */
+    .give-card {
+      background: white;
+      border-radius: var(--r-xl);
+      border: 1px solid var(--border);
+      box-shadow: 0 4px 32px rgba(26,24,14,0.07);
+      overflow: hidden;
+    }
+    .give-card__head {
+      background: linear-gradient(135deg, var(--green-dark), var(--text));
+      padding: 32px 40px;
+      position: relative; overflow: hidden;
+    }
+    .give-card__head-pattern {
+      position: absolute; inset: 0;
+      background: repeating-linear-gradient(45deg,
+        rgba(255,255,255,0.03) 0px, rgba(255,255,255,0.03) 1px,
+        transparent 1px, transparent 32px);
+    }
+    .give-card__head-content { position: relative; }
+    .give-card__head-title {
+      font-family: var(--font-display); font-size: 26px; font-weight: 400;
+      color: white; margin-bottom: 6px;
+    }
+    .give-card__head-sub { font-size: 13px; color: rgba(255,255,255,0.5); letter-spacing: 0.04em; }
+    .give-card__body { padding: 36px 40px; }
+
+    /* ── Fund selector ── */
+    .fund-grid {
+      display: grid; grid-template-columns: repeat(3,1fr); gap: 10px;
+      margin-bottom: 24px;
+    }
+    .fund-btn {
+      display: flex; flex-direction: column; align-items: center; gap: 6px;
+      padding: 14px 8px; border-radius: var(--r-md);
+      border: 1.5px solid var(--border); background: var(--surface);
+      cursor: pointer; transition: all 0.15s; text-align: center;
+    }
+    .fund-btn:hover { border-color: var(--green); background: var(--green-pale); }
+    .fund-btn.active {
+      border-color: var(--green); background: var(--green-pale);
+      box-shadow: 0 0 0 3px rgba(69,106,2,0.12);
+    }
+    .fund-btn__icon {
+      width: 34px; height: 34px; border-radius: var(--r-sm);
+      background: white; border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.15s, border-color 0.15s;
+    }
+    .fund-btn.active .fund-btn__icon { background: var(--green); border-color: var(--green); }
+    .fund-btn.active .fund-btn__icon svg { stroke: white; }
+    .fund-btn__label { font-size: 11px; font-weight: 600; color: var(--text-mid); line-height: 1.2; }
+    .fund-btn.active .fund-btn__label { color: var(--green); }
+
+    /* ── Amount pills ── */
+    .amount-section { margin-bottom: 20px; }
+    .amount-label { font-size: 12px; font-weight: 600; color: var(--text-mid); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 10px; }
+    .amount-pills { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 10px; }
+    .amount-pill {
+      padding: 8px 16px; border: 1.5px solid var(--border);
+      border-radius: 99px; font-size: 14px; font-weight: 600;
+      color: var(--text-mid); cursor: pointer; background: white;
+      transition: all 0.12s;
+    }
+    .amount-pill:hover { border-color: var(--green); color: var(--green); }
+    .amount-pill.active {
+      background: var(--green); border-color: var(--green); color: white;
+      box-shadow: 0 2px 8px rgba(69,106,2,0.25);
+    }
+    .amount-custom-wrap { position: relative; }
+    .amount-prefix {
+      position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
+      font-size: 16px; font-weight: 600; color: var(--text-mid);
+    }
+    .amount-custom {
+      width: 100%; padding: 12px 14px 12px 30px;
+      border: 1.5px solid var(--border); border-radius: var(--r-md);
+      font-size: 20px; font-weight: 600; color: var(--text);
+      font-family: var(--font-display); outline: none;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .amount-custom:focus {
+      border-color: var(--green);
+      box-shadow: 0 0 0 3px rgba(69,106,2,0.1);
+    }
+
+    /* ── Form fields ── */
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .give-field { display: flex; flex-direction: column; gap: 5px; margin-bottom: 14px; }
+    .give-field label { font-size: 12px; font-weight: 600; color: var(--text-mid); text-transform: uppercase; letter-spacing: 0.06em; }
+    .give-field input {
+      padding: 11px 14px; border: 1.5px solid var(--border);
+      border-radius: var(--r-md); font-size: 15px; color: var(--text);
+      background: white; outline: none; font-family: var(--font-body);
+      transition: border-color 0.15s, box-shadow 0.15s, transform 0.1s;
+    }
+    .give-field input:focus {
+      border-color: var(--green);
+      box-shadow: 0 0 0 3px rgba(69,106,2,0.1);
+      transform: translateY(-1px);
+    }
+
+    /* ── Recurring toggle ── */
+    .recurring-row {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 0; border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border); margin-bottom: 20px;
+    }
+    .recurring-label { font-size: 14px; font-weight: 500; }
+    .recurring-sub { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+    .toggle {
+      width: 44px; height: 24px; border-radius: 12px;
+      background: var(--border); border: none; cursor: pointer;
+      position: relative; transition: background 0.2s; flex-shrink: 0;
+    }
+    .toggle::after {
+      content: ''; position: absolute; top: 3px; left: 3px;
+      width: 18px; height: 18px; border-radius: 50%;
+      background: white; transition: transform 0.2s;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+    }
+    .toggle.on { background: var(--green); }
+    .toggle.on::after { transform: translateX(20px); }
+
+    /* ── Submit ── */
+    .give-submit {
+      width: 100%; padding: 16px; border: none; border-radius: var(--r-md);
+      background: var(--green); color: white; font-size: 16px; font-weight: 700;
+      letter-spacing: 0.04em; cursor: pointer; font-family: var(--font-body);
+      display: flex; align-items: center; justify-content: center; gap: 10px;
+      transition: background 0.15s, transform 0.12s, box-shadow 0.15s;
+      margin-top: 6px;
+    }
+    .give-submit:hover { background: var(--green-dark); transform: translateY(-2px); box-shadow: 0 6px 20px rgba(69,106,2,0.3); }
+    .give-submit:active { transform: translateY(0); }
+    .give-submit:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+    .give-submit__lock { opacity: 0.7; }
+
+    /* ── Status states ── */
+    .give-error {
+      display: none; background: #fff0f0; border: 1px solid #f0c0c0;
+      border-radius: var(--r-md); padding: 12px 16px; margin-bottom: 14px;
+      font-size: 14px; color: #c00; align-items: center; gap: 8px;
+    }
+    .give-success {
+      display: none; flex-direction: column; align-items: center;
+      text-align: center; padding: 48px 32px;
+    }
+    .give-success__icon {
+      width: 72px; height: 72px; border-radius: 50%;
+      background: var(--green-pale); display: flex; align-items: center;
+      justify-content: center; margin-bottom: 20px;
+    }
+    .give-success__title {
+      font-family: var(--font-display); font-size: 28px; font-weight: 400;
+      color: var(--green); margin-bottom: 10px;
+    }
+    .give-success__text { font-size: 15px; color: var(--text-muted); line-height: 1.75; max-width: 340px; }
+    .give-success__ref { font-size: 12px; color: var(--text-muted); margin-top: 16px; font-family: monospace; }
+
+    /* ── PayFast redirect form (hidden) ── */
+    #pfForm { display: none; }
+
+    /* ── Security badge ── */
+    .security-strip {
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      margin-top: 14px; font-size: 12px; color: var(--text-muted);
+    }
+    .security-strip svg { opacity: 0.5; }
+
+    /* ── Info panel ── */
+    .give-info { display: flex; flex-direction: column; gap: 20px; }
+    .give-info__verse {
+      background: linear-gradient(145deg, var(--text), var(--brown-dark));
+      border-radius: var(--r-xl); padding: 40px; color: white;
+      position: relative; overflow: hidden;
+    }
+    .give-info__verse-pattern {
+      position: absolute; inset: 0;
+      background: radial-gradient(circle at 80% 20%, rgba(69,106,2,0.3) 0%, transparent 60%);
+    }
+    .give-info__verse-content { position: relative; }
+    .give-info__verse-text {
+      font-family: var(--font-display); font-size: 20px; font-style: italic;
+      color: rgba(255,255,255,0.9); line-height: 1.55; margin-bottom: 14px;
+    }
+    .give-info__verse-ref { font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold-light); }
+
+    .give-info-card {
+      background: white; border-radius: var(--r-lg);
+      border: 1px solid var(--border); padding: 24px;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .give-info-card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(26,24,14,0.08); }
+    .give-info-card__head { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+    .give-info-card__icon {
+      width: 38px; height: 38px; border-radius: var(--r-md);
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .give-info-card__title { font-size: 15px; font-weight: 600; }
+    .give-info-card__text { font-size: 14px; color: var(--text-muted); line-height: 1.75; }
+
+    .fund-descriptions { display: none; }
+
+    @media(max-width:900px) {
+      .give-grid { grid-template-columns: 1fr; }
+      .give-card__body { padding: 28px 24px; }
+      .fund-grid { grid-template-columns: repeat(3,1fr); }
+      .form-row { grid-template-columns: 1fr; }
+    }
+    @media(max-width:480px) {
+      .fund-grid { grid-template-columns: repeat(2,1fr); }
+      .give-card__head { padding: 24px; }
+    }
+  </style>
+</head>
+<body>
+<div id="nav-placeholder"></div>
+
+<div class="page-hero">
+  <div class="page-hero__pattern"></div>
+  <div class="page-hero__content">
+    <p class="page-hero__eyebrow">Sow a Seed</p>
+    <h1>Give</h1>
+    <p>Support the work of God.</p>
+  </div>
+</div>
+
+<section class="give-section">
+  <div class="container">
+    <div class="give-grid">
+
+      <!-- ── GIVE FORM ── -->
+      <div class="give-card reveal">
+        <div class="give-card__head">
+          <div class="give-card__head-pattern"></div>
+          <div class="give-card__head-content">
+            <p class="give-card__head-title">Give Online</p>
+            <p class="give-card__head-sub">Secure payment via PayFast · All major SA banks accepted</p>
+          </div>
+        </div>
+        <div class="give-card__body" id="giveFormBody">
+
+          <!-- Error -->
+          <div class="give-error" id="giveError">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            <span id="giveErrorText"></span>
+          </div>
+
+          <!-- Fund type -->
+          <div style="margin-bottom:6px">
+            <p class="amount-label">I am giving towards</p>
+          </div>
+          <div class="fund-grid" id="fundGrid">
+            <div class="fund-btn active" data-fund="tithe">
+              <div class="fund-btn__icon">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="1.8"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+              </div>
+              <span class="fund-btn__label">Tithe</span>
+            </div>
+            <div class="fund-btn" data-fund="offering">
+              <div class="fund-btn__icon">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="1.8"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+              </div>
+              <span class="fund-btn__label">Offering</span>
+            </div>
+            <div class="fund-btn" data-fund="building">
+              <div class="fund-btn__icon">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="1.8"><path d="M3 9l9-7 9 7"/><rect x="3" y="9" width="18" height="12" rx="1"/><path d="M9 22V12h6v10"/></svg>
+              </div>
+              <span class="fund-btn__label">Building Fund</span>
+            </div>
+            <div class="fund-btn" data-fund="missions">
+              <div class="fund-btn__icon">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+              </div>
+              <span class="fund-btn__label">Missions</span>
+            </div>
+            <div class="fund-btn" data-fund="youth">
+              <div class="fund-btn__icon">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="1.8"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+              </div>
+              <span class="fund-btn__label">Youth</span>
+            </div>
+            <div class="fund-btn" data-fund="thanksgiving">
+              <div class="fund-btn__icon">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="1.8"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              </div>
+              <span class="fund-btn__label">Thanksgiving</span>
+            </div>
+          </div>
+
+          <!-- Amount -->
+          <div class="amount-section">
+            <p class="amount-label">Amount (ZAR)</p>
+            <div class="amount-pills">
+              <div class="amount-pill" data-amount="50">R50</div>
+              <div class="amount-pill" data-amount="100">R100</div>
+              <div class="amount-pill active" data-amount="200">R200</div>
+              <div class="amount-pill" data-amount="500">R500</div>
+              <div class="amount-pill" data-amount="1000">R1 000</div>
+            </div>
+            <div class="amount-custom-wrap">
+              <span class="amount-prefix">R</span>
+              <input class="amount-custom" type="number" id="amountInput" min="10" placeholder="Enter amount" value="200"/>
+            </div>
+          </div>
+
+          <!-- Personal details -->
+          <div class="form-row">
+            <div class="give-field"><label>First name *</label><input type="text" id="firstName" placeholder="Your first name"/></div>
+            <div class="give-field"><label>Last name *</label><input type="text" id="lastName" placeholder="Your last name"/></div>
+          </div>
+          <div class="give-field"><label>Email address *</label><input type="email" id="email" placeholder="your@email.com"/></div>
+
+          <!-- Recurring toggle -->
+          <div class="recurring-row">
+            <div>
+              <p class="recurring-label">Make this a monthly gift</p>
+              <p class="recurring-sub">Contact us after payment to set up a recurring debit order</p>
+            </div>
+            <button class="toggle" id="recurringToggle" type="button" aria-label="Toggle recurring"></button>
+          </div>
+
+          <!-- Cloudflare Turnstile -->
+          <div id="turnstileWidget" style="margin-bottom:14px;min-height:65px;display:flex;align-items:center;justify-content:center;">
+            <div class="cf-turnstile"
+              data-sitekey="0x4AAAAAABkz2Q6v7Pj1Xk3a"
+              data-theme="light"
+              data-size="flexible"
+              data-callback="onTurnstileSuccess"
+              data-expired-callback="onTurnstileExpired">
+            </div>
+          </div>
+
+          <!-- Submit -->
+          <button class="give-submit" id="giveBtn" onclick="initiateGiving()">
+            <svg class="give-submit__lock" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            Proceed to Secure Payment
+          </button>
+          <div class="security-strip">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            Secured by PayFast · 256-bit SSL encryption
+          </div>
+        </div>
+
+        <!-- Success state (inside card) -->
+        <div class="give-success" id="giveSuccess">
+          <div class="give-success__icon">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <p class="give-success__title">Thank you!</p>
+          <p class="give-success__text">
+            Your gift has been received and you will get an email confirmation shortly. May God bless you for your gift.
+          </p>
+          <p class="give-success__ref" id="successRef"></p>
+          <a href="give.html" class="btn btn--outline-dark" style="margin-top:24px;font-size:13px">Give Again</a>
+        </div>
+
+        <!-- Cancelled state -->
+        <div class="give-success" id="giveCancelled" style="display:none">
+          <div class="give-success__icon" style="background:#fff0f0">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#c00" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+          </div>
+          <p class="give-success__title" style="color:var(--text)">Payment Cancelled</p>
+          <p class="give-success__text">No payment was taken. You can try again below.</p>
+          <button onclick="resetForm()" class="btn btn--primary" style="margin-top:24px">Try Again</button>
+        </div>
+      </div>
+
+      <!-- ── INFO PANEL ── -->
+      <div class="give-info reveal">
+        <div class="give-info__verse">
+          <div class="give-info__verse-pattern"></div>
+          <div class="give-info__verse-content">
+            <p class="give-info__verse-text">
+              "Bring the whole tithe into the storehouse, that there may be food in my house. Test me in this, says the Lord Almighty, and see if I will not throw open the floodgates of heaven."
+            </p>
+            <p class="give-info__verse-ref">Malachi 3:10</p>
+          </div>
+        </div>
+
+        <div class="give-info-card">
+          <div class="give-info-card__head">
+            <div class="give-info-card__icon" style="background:var(--green-pale)">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="1.8"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            </div>
+            <h3 class="give-info-card__title">Secure &amp; Safe</h3>
+          </div>
+          <p class="give-info-card__text">All payments are processed by PayFast — South Africa's leading payment gateway — with 256-bit SSL encryption. Your card details are never stored by us.</p>
+        </div>
+
+        <div class="give-info-card">
+          <div class="give-info-card__head">
+            <div class="give-info-card__icon" style="background:#faf3e8">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--brown)" stroke-width="1.8"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+            </div>
+            <h3 class="give-info-card__title">Your Tithe, Tracked</h3>
+          </div>
+          <p class="give-info-card__text">Members can view their full giving history, download statements, and track their tithe from the <a href="https://member.thesynagogues.com" target="_blank" style="color:var(--green)">member portal</a>.</p>
+        </div>
+
+        <div class="give-info-card">
+          <div class="give-info-card__head">
+            <div class="give-info-card__icon" style="background:var(--green-pale)">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="1.8"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            </div>
+            <h3 class="give-info-card__title">EFT / Direct Deposit</h3>
+          </div>
+          <p class="give-info-card__text">
+            Prefer to pay via EFT? Contact us at <a href="mailto:info@thesynagogues.com" style="color:var(--green)">info@thesynagogues.com</a> for our banking details. Please use your name and fund type as reference.
+          </p>
+        </div>
+
+        <div class="give-info-card" style="background:var(--green);border-color:var(--green)">
+          <div class="give-info-card__head">
+            <div class="give-info-card__icon" style="background:rgba(255,255,255,0.15)">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.8"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+            </div>
+            <h3 class="give-info-card__title" style="color:white">Why We Give</h3>
+          </div>
+          <p class="give-info-card__text" style="color:rgba(255,255,255,0.75)">
+            "The Word of God received in faith produces a miracle." Giving is not obligation — it is the expression of a heart transformed by the Word. Every seed you sow carries the nature of a harvest.
+          </p>
+          <p style="font-size:11px;color:rgba(255,255,255,0.4);margin-top:10px;letter-spacing:0.06em">— Apostle Glen Monama</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- Hidden PayFast redirect form -->
+<form id="pfForm" action="https://www.payfast.co.za/eng/process" method="POST"></form>
+
+<div id="footer-placeholder"></div>
+<script src="layout.js"></script>
+<script src="nav.js"></script>
+<script>
+const API = 'https://campushub-api.onrender.com/api/giving/public-initiate';
+
+let selectedFund   = 'tithe';
+let selectedAmount = 200;
+let recurring      = false;
+
+// ── Fund selector ────────────────────────────────────────────────
+document.querySelectorAll('.fund-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.fund-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    selectedFund = btn.dataset.fund;
+  });
+});
+
+// ── Amount pills ─────────────────────────────────────────────────
+const amountInput = document.getElementById('amountInput');
+document.querySelectorAll('.amount-pill').forEach(pill => {
+  pill.addEventListener('click', () => {
+    document.querySelectorAll('.amount-pill').forEach(p => p.classList.remove('active'));
+    pill.classList.add('active');
+    selectedAmount = parseInt(pill.dataset.amount);
+    amountInput.value = selectedAmount;
+  });
+});
+amountInput.addEventListener('input', () => {
+  document.querySelectorAll('.amount-pill').forEach(p => p.classList.remove('active'));
+  selectedAmount = parseFloat(amountInput.value) || 0;
+});
+
+// ── Recurring toggle ──────────────────────────────────────────────
+document.getElementById('recurringToggle').addEventListener('click', function() {
+  recurring = !recurring;
+  this.classList.toggle('on', recurring);
+});
+
+// ── Check URL for return status ───────────────────────────────────
+const params = new URLSearchParams(window.location.search);
+if (params.get('status') === 'success') {
+  showSuccess(params.get('ref') || '');
+} else if (params.get('status') === 'cancelled') {
+  document.getElementById('giveFormBody').style.display = 'none';
+  document.getElementById('giveCancelled').style.display = 'flex';
+}
+
+// ── Submit ────────────────────────────────────────────────────────
+async function initiateGiving() {
+  const btn       = document.getElementById('giveBtn');
+  const errBox    = document.getElementById('giveError');
+  const errText   = document.getElementById('giveErrorText');
+  const showErr   = msg => { errText.textContent = msg; errBox.style.display = 'flex'; btn.disabled = false; btn.innerHTML = originalBtnHTML; };
+
+  const originalBtnHTML = btn.innerHTML;
+  errBox.style.display = 'none';
+  btn.disabled = true;
+  btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="animation:spin 1s linear infinite"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg> Processing…';
+
+  const amount    = parseFloat(amountInput.value);
+  const firstName = document.getElementById('firstName').value.trim();
+  const lastName  = document.getElementById('lastName').value.trim();
+  const email     = document.getElementById('email').value.trim();
+
+  if (!amount || amount < 10) return showErr('Please enter an amount of at least R10.');
+  if (amount > 50000) return showErr('Maximum online giving is R50,000. For larger gifts please email info@thesynagogues.com');
+  if (!firstName || !lastName) return showErr('Please enter your first and last name.');
+  if (!email || !/\S+@\S+\.\S+/.test(email)) return showErr('Please enter a valid email address.');
+  if (!turnstileToken) return showErr('Please complete the security check before proceeding.');
+
+  try {
+    const res  = await fetch(API, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ amount, fund_type: selectedFund, first_name: firstName, last_name: lastName, email, cf_turnstile_token: turnstileToken }),
+    });
+    const data = await res.json();
+
+    if (!res.ok) return showErr(data.error || 'Something went wrong. Please try again.');
+
+    if (data.dev_mode) {
+      // Dev / PayFast not configured
+      showSuccess(data.reference);
+      return;
+    }
+
+    // Build hidden PayFast form and submit
+    const form = document.getElementById('pfForm');
+    form.innerHTML = '';
+    form.action = data.payment_url;
+    Object.entries(data.fields).forEach(([k, v]) => {
+      const inp = document.createElement('input');
+      inp.type  = 'hidden'; inp.name = k; inp.value = v;
+      form.appendChild(inp);
+    });
+    form.submit();
+
+  } catch (err) {
+    showErr('Could not connect. Please check your internet and try again, or contact us at info@thesynagogues.com');
+    btn.disabled = false;
+    btn.innerHTML = originalBtnHTML;
+  }
+}
+
+function showSuccess(ref) {
+  document.getElementById('giveFormBody').style.display = 'none';
+  const s = document.getElementById('giveSuccess');
+  s.style.display = 'flex';
+  if (ref) document.getElementById('successRef').textContent = 'Reference: ' + ref;
+}
+
+function resetForm() {
+  document.getElementById('giveFormBody').style.display = 'block';
+  document.getElementById('giveCancelled').style.display = 'none';
+  document.getElementById('giveSuccess').style.display = 'none';
+  // Clear URL params
+  window.history.replaceState({}, '', 'give.html');
+  turnstileToken = null;
+  if (window.turnstile) turnstile.reset();
+}
+
+// Spinner CSS
+const spin = document.createElement('style');
+spin.textContent = '@keyframes spin { to { transform: rotate(360deg); } }';
+document.head.appendChild(spin);
+</script>
+</body>
+</html>

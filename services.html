@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Services — The Synagogues</title>
+  <meta name="description" content="Join us for Friday Night Prayer, Sunday Services, and 7th Week Special Services at The Synagogues."/>
+  <link rel="stylesheet" href="styles.css"/>
+  <style>
+    .service-block { padding: clamp(72px,10vw,100px) 0; position: relative; }
+    .service-block:nth-child(odd)  { background: white; }
+    .service-block:nth-child(even) { background: var(--surface); }
+    .service-block__grid { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(48px,8vw,100px); align-items: center; }
+    .service-block__grid--reverse { direction: rtl; }
+    .service-block__grid--reverse > * { direction: ltr; }
+    .service-block__visual { border-radius: var(--r-xl); overflow: hidden; aspect-ratio: 4/3; position: relative; }
+    .service-block__img { width: 100%; height: 100%; object-fit: cover; transition: transform 8s cubic-bezier(0.25,0.46,0.45,0.94); display: block; }
+    .service-block__visual:hover .service-block__img { transform: scale(1.06); }
+    .service-block__overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(10,8,4,0.65) 0%, rgba(10,8,4,0.1) 50%, transparent 80%); }
+    .service-block__time-chip {
+      position: absolute; top: 20px; right: 20px;
+      background: rgba(0,0,0,0.5); backdrop-filter: blur(12px);
+      border: 1px solid rgba(255,255,255,0.15); border-radius: 2px;
+      padding: 8px 14px; color: white;
+      font-size: 10px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase;
+    }
+    .service-block__caption { position: absolute; bottom: 20px; left: 24px; font-family: var(--font-display); font-size: 26px; font-weight: 300; color: rgba(255,255,255,0.6); }
+    .service-block__day { font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase; font-weight: 600; margin-bottom: 12px; }
+    .service-block__title { font-family: var(--font-display); font-size: clamp(34px,5vw,52px); font-weight: 400; line-height: 1.1; margin-bottom: 20px; }
+    .service-block__desc { font-size: 16px; line-height: 1.85; color: var(--text-mid); margin-bottom: 14px; }
+    .service-block__meta { display: flex; flex-direction: column; gap: 12px; margin-top: 28px; padding-top: 24px; border-top: 1px solid var(--border); }
+    .service-block__meta-item { display: flex; align-items: center; gap: 12px; font-size: 14px; color: var(--text-mid); }
+    .meta-icon { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+
+    .special-week { background: linear-gradient(135deg, var(--text) 0%, var(--brown-dark) 50%, var(--green-dark) 130%); padding: clamp(80px,10vw,120px) 0; color: white; }
+    .special-week__grid { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(48px,8vw,80px); align-items: center; }
+    .special-week__heading { font-family: var(--font-display); font-size: clamp(34px,5vw,52px); font-weight: 400; line-height: 1.1; margin-bottom: 20px; }
+    .special-week__text { font-size: 16px; color: rgba(255,255,255,0.65); line-height: 1.85; margin-bottom: 14px; }
+    .special-week__card { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); border-radius: var(--r-lg); padding: 28px; }
+    .special-week__card-num { font-family: var(--font-display); font-size: 60px; font-weight: 300; color: var(--gold-light); line-height: 1; margin-bottom: 6px; }
+    .special-week__card-label { font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: rgba(255,255,255,0.4); }
+    .special-week__img { border-radius: var(--r-xl); overflow: hidden; aspect-ratio: 4/3; position: relative; }
+    .special-week__img img { width: 100%; height: 100%; object-fit: cover; filter: brightness(0.7) saturate(1.1); transition: transform 8s ease; display: block; }
+    .special-week__img:hover img { transform: scale(1.05); }
+    .special-week__img-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(10,8,4,0.55) 0%, transparent 60%); }
+
+    .plan-visit { background: var(--green-pale); padding: clamp(60px,8vw,100px) 0; text-align: center; }
+    .plan-visit__grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 20px; margin-bottom: 48px; text-align: left; }
+    .plan-card { background: white; border-radius: var(--r-lg); padding: 32px 24px; border: 1px solid var(--border); transition: transform 0.25s, box-shadow 0.25s; }
+    .plan-card:hover { transform: translateY(-4px); box-shadow: 0 12px 36px rgba(26,24,14,0.1); }
+    .plan-card__icon { width: 44px; height: 44px; border-radius: var(--r-md); background: var(--green-pale); display: flex; align-items: center; justify-content: center; margin-bottom: 14px; }
+    .plan-card__title { font-size: 16px; font-weight: 600; margin-bottom: 8px; }
+    .plan-card__text { font-size: 14px; color: var(--text-muted); line-height: 1.7; }
+
+    /* slide animations */
+    .slide-in-left  { opacity:0; transform:translateX(-36px); transition:opacity 0.7s ease, transform 0.7s cubic-bezier(0.22,1,0.36,1); }
+    .slide-in-right { opacity:0; transform:translateX(36px);  transition:opacity 0.7s ease, transform 0.7s cubic-bezier(0.22,1,0.36,1); }
+    .slide-in-left.visible, .slide-in-right.visible { opacity:1; transform:translateX(0); }
+
+    @media(max-width:900px){
+      .service-block__grid,.special-week__grid{grid-template-columns:1fr}
+      .service-block__grid--reverse{direction:ltr}
+      .plan-visit__grid{grid-template-columns:1fr}
+    }
+  </style>
+</head>
+<body>
+<div id="nav-placeholder"></div>
+
+<div class="page-hero">
+  <div class="page-hero__pattern"></div>
+  <div class="page-hero__content">
+    <p class="page-hero__eyebrow">Come &amp; Worship</p>
+    <h1>Our Services</h1>
+    <p>Three gatherings each week where we encounter God, grow in faith, and do life together as a community.</p>
+  </div>
+</div>
+
+<!-- Friday Night Prayer -->
+<section class="service-block" id="friday">
+  <div class="container">
+    <div class="service-block__grid">
+      <div class="service-block__visual slide-in-left">
+        <img class="service-block__img"
+          src="assets/prayer.jpg"
+          alt="Friday Night Prayer — The Synagogues JWC" loading="lazy"/>
+        <div class="service-block__overlay"></div>
+        <span class="service-block__time-chip">18:00 — Every Friday</span>
+        <span class="service-block__caption">Prayer</span>
+      </div>
+      <div class="reveal" style="transition-delay:0.15s">
+        <p class="service-block__day" style="color:var(--green)">Every Friday Evening</p>
+        <div class="divider"></div>
+        <h2 class="service-block__title">Friday Night<br>Prayer</h2>
+        <p class="service-block__desc">There is no substitute for a community that prays together. Friday Night Prayer is our most sacred gathering — a time when the church comes together in one accord to seek the face of God.</p>
+        <p class="service-block__desc">Expect deep, Spirit-led intercession, passionate worship, and a powerful encounter with God. This service is the engine room of everything we do.</p>
+        <div class="service-block__meta">
+          <div class="service-block__meta-item">
+            <div class="meta-icon" style="background:var(--green-pale)">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            </div>
+            <span><strong>19:00</strong> — Doors open 18:30</span>
+          </div>
+          <div class="service-block__meta-item">
+            <div class="meta-icon" style="background:var(--green-pale)">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="1.8"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            </div>
+            <span>Vereeniging &amp; Pretoria East campuses</span>
+          </div>
+          <div class="service-block__meta-item">
+            <div class="meta-icon" style="background:var(--green-pale)">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="1.8"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+            </div>
+            <span>All are welcome. Come as you are.</span>
+          </div>
+        </div>
+        <div style="margin-top:28px"><a href="contact.html" class="btn btn--primary">Plan Your Visit</a></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Sunday Service -->
+<section class="service-block" id="sunday">
+  <div class="container">
+    <div class="service-block__grid service-block__grid--reverse">
+      <div class="service-block__visual slide-in-right">
+        <img class="service-block__img"
+          src="assets/sunday-service.jpg"
+          alt="Sunday Service — The Synagogues JWC" loading="lazy"/>
+        <div class="service-block__overlay"></div>
+        <span class="service-block__time-chip">09:00 — Every Sunday</span>
+        <span class="service-block__caption">Sunday</span>
+      </div>
+      <div class="reveal" style="transition-delay:0.15s">
+        <p class="service-block__day" style="color:var(--brown)">Every Sunday Morning</p>
+        <div class="divider"></div>
+        <h2 class="service-block__title">Sunday<br>Service</h2>
+        <p class="service-block__desc">Sunday Service is the heartbeat of our church family. Come expectant — for powerful, prophetic preaching, anointed worship that ushers you into the presence of God, and ministry that touches every area of your life.</p>
+        <p class="service-block__desc">Whether you're visiting for the first time or have been part of the family for years, Sunday Service is a place to belong, to grow, and to encounter God in a tangible way.</p>
+        <div class="service-block__meta">
+          <div class="service-block__meta-item">
+            <div class="meta-icon" style="background:#faf3e8">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--brown)" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            </div>
+            <span><strong>08:30 &amp; 14:00</strong> — Two services every Sunday</span>
+          </div>
+          <div class="service-block__meta-item">
+            <div class="meta-icon" style="background:#faf3e8">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--brown)" stroke-width="1.8"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            </div>
+            <span>Vereeniging &amp; Pretoria East campuses</span>
+          </div>
+          <div class="service-block__meta-item">
+            <div class="meta-icon" style="background:#faf3e8">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--brown)" stroke-width="1.8"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            </div>
+            <span>Children's ministry available during service</span>
+          </div>
+        </div>
+        <div style="margin-top:28px"><a href="contact.html" class="btn btn--primary">Plan Your Visit</a></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 7th Week Special -->
+<section class="special-week" id="seventh">
+  <div class="container">
+    <div class="special-week__grid reveal">
+      <div>
+        <p class="eyebrow" style="color:var(--gold-light);margin-bottom:16px">Every Seventh Week</p>
+        <div class="divider" style="background:linear-gradient(90deg,var(--gold-light),transparent)"></div>
+        <h2 class="special-week__heading">The 7th Week<br>Special Service</h2>
+        <p class="special-week__text">Every seventh Sunday, both campuses come together for an extended, special gathering. These are landmark moments — deeply anticipated and set apart.</p>
+        <p class="special-week__text">Expect a longer service, stronger anointing, special guests, impartation, and a heightened atmosphere of celebration and encounter. This is where milestones are marked.</p>
+        <div style="display:flex;gap:16px;margin-top:32px;flex-wrap:wrap">
+          <div class="special-week__card">
+            <div class="special-week__card-num">7</div>
+            <div class="special-week__card-label">The number of completion</div>
+          </div>
+          <div class="special-week__card" style="flex:1">
+            <div style="font-size:12px;color:rgba(255,255,255,0.4);margin-bottom:8px;letter-spacing:0.08em;text-transform:uppercase">When</div>
+            <div style="font-size:15px;color:white;line-height:1.7">Every 7th Sunday<br>09:00 · Combined campuses</div>
+          </div>
+        </div>
+        <div style="margin-top:28px"><a href="contact.html" class="btn btn--gold">Get Notified</a></div>
+      </div>
+      <div class="special-week__img">
+        <img src="assets/7th-week.jpg"
+          alt="7th Week Sunday Service — The Synagogues JWC" loading="lazy"/>
+        <div class="special-week__img-overlay"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Plan Your Visit -->
+<section class="plan-visit">
+  <div class="container">
+    <div class="reveal" style="max-width:560px;margin:0 auto 52px">
+      <p class="eyebrow">Plan Your Visit</p>
+      <div class="divider divider--center"></div>
+      <h2 class="display display-sm">What to expect</h2>
+    </div>
+    <div class="plan-visit__grid stagger">
+      <div class="plan-card">
+        <div class="plan-card__icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+        <h3 class="plan-card__title">Arrive a little early</h3>
+        <p class="plan-card__text">Doors open 1 hr before each service. Arriving early gives you time to find a seat, meet a host, and settle in before things start.</p>
+      </div>
+      <div class="plan-card">
+        <div class="plan-card__icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="1.8"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></div>
+        <h3 class="plan-card__title">Come as you are</h3>
+        <p class="plan-card__text">Smart casual is the norm. We value your presence over your outfit. There is no dress code — come as you are and be received as family.</p>
+      </div>
+      <div class="plan-card">
+        <div class="plan-card__icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="1.8"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+        <h3 class="plan-card__title">A host will welcome you</h3>
+        <p class="plan-card__text">First-time visitors receive a personal welcome from one of our hosts, who will help you find your seat, answer questions, and connect you to the family.</p>
+      </div>
+    </div>
+    <div style="text-align:center">
+      <a href="contact.html" class="btn btn--primary">Contact Us to Plan Your Visit</a>
+    </div>
+  </div>
+</section>
+
+<section class="section--green" style="padding:clamp(60px,8vw,80px) 0;text-align:center">
+  <div class="container reveal">
+    <p style="font-family:var(--font-display);font-size:clamp(26px,4vw,44px);font-weight:400;margin-bottom:14px">You are expected here</p>
+    <p style="font-size:15px;color:rgba(255,255,255,0.75);margin-bottom:32px;max-width:480px;margin-left:auto;margin-right:auto;line-height:1.7">There is a seat with your name on it. Come experience The Synagogues for yourself.</p>
+    <div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap">
+      <a href="contact.html" class="btn btn--outline">Get Directions</a>
+      <a href="podcast.html" class="btn btn--gold">Listen to a Message First</a>
+    </div>
+  </div>
+</section>
+
+<div id="footer-placeholder"></div>
+<script src="layout.js"></script><script src="nav.js"></script>
+<script>
+const slideEls = document.querySelectorAll('.slide-in-left,.slide-in-right');
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); } });
+}, { threshold: 0.12 });
+slideEls.forEach(el => obs.observe(el));
+</script>
+</body>
+</html>

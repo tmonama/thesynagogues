@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>About — The Synagogues JWC</title>
+  <meta name="description" content="Learn about The Synagogues, our vision, mission, and the leadership of Apostle Glen Monama."/>
+  <link rel="stylesheet" href="styles.css"/>
+  <style>
+    .about-intro { padding: clamp(80px,10vw,120px) 0; }
+    .about-intro__grid { display:grid; grid-template-columns:1fr 1.2fr; gap:clamp(48px,8vw,100px); align-items:center; }
+    .about-intro__heading { font-family:var(--font-display); font-size:clamp(36px,5vw,60px); font-weight:400; line-height:1.15; margin-bottom:20px; }
+    .about-intro__heading em { font-style:italic; color:var(--green); }
+    .about-intro__text { font-size:16px; line-height:1.85; color:var(--text-mid); margin-bottom:16px; }
+
+    .values { background:var(--surface); padding:clamp(60px,8vw,100px) 0; }
+    .values__header { text-align:center; max-width:560px; margin:0 auto 56px; }
+    .values__grid { display:grid; grid-template-columns:repeat(3,1fr); gap:24px; }
+    .value-card { background:white; border-radius:var(--r-lg); border:1px solid var(--border); padding:36px 28px; }
+    .value-card__number { font-family:var(--font-display); font-size:64px; font-weight:300; color:var(--green-pale); line-height:1; margin-bottom:12px; }
+    .value-card__name { font-size:18px; font-weight:500; margin-bottom:12px; }
+    .value-card__desc { font-size:14px; color:var(--text-muted); line-height:1.7; }
+
+    .apostle { padding:clamp(80px,10vw,120px) 0; }
+    .apostle__grid { display:grid; grid-template-columns:1fr 1.4fr; gap:clamp(48px,8vw,80px); align-items:start; }
+    .apostle__portrait {
+      background:linear-gradient(145deg,var(--text),var(--brown-dark));
+      border-radius:var(--r-xl); aspect-ratio:3/4;
+      display:flex; align-items:center; justify-content:center;
+      position:relative; overflow:hidden;
+    }
+    .apostle__portrait-inner { overflow:hidden;
+      font-family:var(--font-display); font-size:120px; font-style:italic;
+      color:rgba(255,255,255,0.08); user-select:none;
+    }
+    .apostle__portrait-badge {
+      position:absolute; bottom:24px; left:24px; right:24px;
+      background:rgba(255,255,255,0.06); backdrop-filter:blur(12px);
+      border:1px solid rgba(255,255,255,0.1); border-radius:var(--r-md);
+      padding:16px 20px;
+    }
+    .apostle__portrait-badge-name { font-family:var(--font-display); font-size:22px; color:white; }
+    .apostle__portrait-badge-title { font-size:11px; letter-spacing:0.14em; text-transform:uppercase; color:var(--gold-light); margin-top:4px; }
+    .apostle__name { font-family:var(--font-display); font-size:clamp(32px,4.5vw,52px); font-weight:400; margin-bottom:8px; }
+    .apostle__title { font-size:13px; letter-spacing:0.14em; text-transform:uppercase; color:var(--green); font-weight:500; margin-bottom:24px; }
+    .apostle__text { font-size:16px; line-height:1.85; color:var(--text-mid); margin-bottom:16px; }
+    .apostle__links { display:flex; gap:12px; margin-top:28px; flex-wrap:wrap; }
+
+    .history { background:linear-gradient(135deg,var(--text),var(--brown-dark) 60%,var(--green-dark) 130%); padding:clamp(80px,10vw,120px) 0; color:white; }
+    .history__grid { display:grid; grid-template-columns:1fr 2fr; gap:clamp(48px,8vw,80px); }
+    .history__label { font-family:var(--font-display); font-size:clamp(40px,6vw,80px); font-weight:300; color:rgba(255,255,255,0.1); line-height:1; }
+    .history__heading { font-family:var(--font-display); font-size:clamp(28px,4vw,44px); font-weight:400; margin-bottom:24px; }
+    .history__text { font-size:16px; line-height:1.85; color:rgba(255,255,255,0.6); margin-bottom:16px; }
+
+    .beliefs { padding:clamp(60px,8vw,100px) 0; }
+    .beliefs__header { text-align:center; margin-bottom:48px; }
+    .beliefs__grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+    .belief { display:flex; gap:16px; align-items:flex-start; padding:20px 24px; background:var(--green-pale); border-radius:var(--r-md); }
+    .belief__icon { width:32px; height:32px; background:var(--green); border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0; color:white; font-size:14px; }
+    .belief__text { font-size:14px; color:var(--text-mid); line-height:1.6; font-weight:500; }
+
+    @media (max-width:900px) {
+      .about-intro__grid, .apostle__grid, .history__grid, .beliefs__grid { grid-template-columns:1fr; }
+      .values__grid { grid-template-columns:1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<div id="nav-placeholder"></div>
+
+<div class="page-hero">
+  <div class="page-hero__pattern"></div>
+  <div class="page-hero__content">
+    <p class="page-hero__eyebrow">Who We Are</p>
+    <h1>About The Synagogues</h1>
+    <p>A prophetic apostolic ministry raised up to carry the Kingdom of God to every nation, every generation, every sphere.</p>
+  </div>
+</div>
+
+<!-- ── INTRO ───────────────────────────────────────────────────────────────── -->
+<section class="about-intro">
+  <div class="container">
+    <div class="about-intro__grid">
+      <div class="reveal">
+        <p class="eyebrow">Our Story</p>
+        <div class="divider"></div>
+        <h2 class="about-intro__heading">Built on <em>purpose,</em><br>rooted in <em>prayer</em></h2>
+      </div>
+      <div class="reveal">
+        <p class="about-intro__text">
+          The Synagogues was founded on the vision of creating a Home of the Word — a place where every person, regardless of background, can encounter the living God and discover their God-given purpose.
+        </p>
+        <p class="about-intro__text">
+          We are a prophetic apostolic ministry that believes in the full expression of the Gospel — signs, wonders, miracles, and the transformative power of the Holy Spirit working through yielded vessels.
+        </p>
+        <p class="about-intro__text">
+          From our home base in Vereeniging, we have grown to multiple campuses and a global podcast audience, reaching thousands with the Word of God every week.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── VALUES ──────────────────────────────────────────────────────────────── -->
+<section class="values">
+  <div class="container">
+    <div class="values__header reveal">
+      <p class="eyebrow">What We Stand For</p>
+      <div class="divider divider--center"></div>
+      <h2 class="display display-sm">Our Core Values</h2>
+    </div>
+    <div class="values__grid stagger">
+      <div class="value-card">
+        <div class="value-card__number">01</div>
+        <h3 class="value-card__name">Prayer First</h3>
+        <p class="value-card__desc">Everything we do flows from a culture of prayer and intimacy with God. We are a house built on the foundation of seeking His face.</p>
+      </div>
+      <div class="value-card">
+        <div class="value-card__number">02</div>
+        <h3 class="value-card__name">Word-Centred</h3>
+        <p class="value-card__desc">We are committed to the uncompromising, prophetic teaching of the Word of God as the ultimate authority in every area of life.</p>
+      </div>
+      <div class="value-card">
+        <div class="value-card__number">03</div>
+        <h3 class="value-card__name">Kingdom Purpose</h3>
+        <p class="value-card__desc">Every believer carries a specific assignment in God's Kingdom. We are dedicated to helping people discover, develop and deploy their God-given purpose.</p>
+      </div>
+      <div class="value-card">
+        <div class="value-card__number">04</div>
+        <h3 class="value-card__name">Community</h3>
+        <p class="value-card__desc">We believe in doing life together. Iron sharpens iron — we are stronger, wiser and more impactful when we walk in genuine community.</p>
+      </div>
+      <div class="value-card">
+        <div class="value-card__number">05</div>
+        <h3 class="value-card__name">All Nations</h3>
+        <p class="value-card__desc">The Great Commission drives us. We are a house built for all peoples — every tribe, tongue and nation is welcome at the table.</p>
+      </div>
+      <div class="value-card">
+        <div class="value-card__number">06</div>
+        <h3 class="value-card__name">Spirit-Led</h3>
+        <p class="value-card__desc">We create space for the Holy Spirit to move freely — in worship, in ministry, in our daily lives. We honour His presence above all else.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── APOSTLE ─────────────────────────────────────────────────────────────── -->
+<section class="apostle">
+  <div class="container">
+    <div class="apostle__grid">
+      <div class="reveal">
+        <div class="apostle__portrait">
+          <img src="assets/apostle-glen-monama.jpg" alt="Apostle Glen Monama" style="width:100%;height:100%;object-fit:cover;object-position:center top;display:block;"/>
+          <div class="apostle__portrait-badge">
+            <div class="apostle__portrait-badge-name">Apostle Glen Monama</div>
+            <div class="apostle__portrait-badge-title">Senior Pastor & Founder</div>
+          </div>
+        </div>
+      </div>
+      <div class="reveal">
+        <p class="eyebrow">Leadership</p>
+        <div class="divider"></div>
+        <h2 class="apostle__name">Apostle Glen Monama</h2>
+        <p class="apostle__title">Senior Pastor & Founder · The Synagogues</p>
+        <p class="apostle__text">
+          Apostle Glen Monama is a prophetic apostolic minister who carries a distinct mandate to raise up and release a generation of purpose-driven believers. His ministry is marked by clear prophetic insight, powerful teaching of the Word, and an unwavering commitment to seeing lives transformed by the power of the Gospel.
+        </p>
+        <p class="apostle__text">
+          With a passion for prayer and intercession, Apostle Glen has built The Synagogues as a true house of prayer — a spiritual hub where believers come to encounter God, be equipped, and be sent out to fulfill their Kingdom assignments.
+        </p>
+        <p class="apostle__text">
+          He is also the host of the "Words of Wisdom" podcast, which reaches listeners across South Africa and the world with practical, prophetic teaching from the Word of God.
+        </p>
+        <div class="apostle__links">
+          <a href="https://apostleglenmonama.com" target="_blank" rel="noopener" class="btn btn--primary">Visit Apostle's Website ↗</a>
+          <a href="podcast.html" class="btn btn--outline-dark">Listen to Podcast</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── HISTORY ─────────────────────────────────────────────────────────────── -->
+<section class="history">
+  <div class="container">
+    <div class="history__grid reveal">
+      <div>
+        <div class="history__label">Our<br>Journey</div>
+      </div>
+      <div>
+        <h2 class="history__heading">A ministry built step by step in faith</h2>
+        <p class="history__text">
+          What began as a small gathering of believers with a hunger for God has grown into a multi-campus ministry touching thousands of lives. The Synagogues was planted in Vereeniging with a simple yet profound mandate: to be a Home of the Word.
+        </p>
+        <p class="history__text">
+          Over the years, God has faithfully grown the work — from our Vereeniging headquarters to our Pretoria East campus, from local meetings to a global podcast, from a handful of members to a thriving community of purpose-driven believers.
+        </p>
+        <p class="history__text">
+          Every step of this journey has been marked by prayer, sacrifice, and an unshakeable trust in God's faithfulness. The best is still ahead.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── BELIEFS ─────────────────────────────────────────────────────────────── -->
+<section class="beliefs">
+  <div class="container">
+    <div class="beliefs__header reveal">
+      <p class="eyebrow">What We Believe</p>
+      <div class="divider divider--center"></div>
+      <h2 class="display display-sm">Our Statement of Faith</h2>
+    </div>
+    <div class="beliefs__grid stagger">
+      <div class="belief"><div class="belief__icon">✦</div><div class="belief__text">We believe in the Holy Trinity — Father, Son and Holy Spirit.</div></div>
+      <div class="belief"><div class="belief__icon">✦</div><div class="belief__text">We believe in the infallibility and authority of Scripture.</div></div>
+      <div class="belief"><div class="belief__icon">✦</div><div class="belief__text">We believe in salvation by grace through faith in Jesus Christ alone.</div></div>
+      <div class="belief"><div class="belief__icon">✦</div><div class="belief__text">We believe in water baptism by immersion as an outward sign of inward transformation.</div></div>
+      <div class="belief"><div class="belief__icon">✦</div><div class="belief__text">We believe in the baptism of the Holy Spirit with the evidence of speaking in tongues.</div></div>
+      <div class="belief"><div class="belief__icon">✦</div><div class="belief__text">We believe in divine healing as part of the atonement of Christ.</div></div>
+      <div class="belief"><div class="belief__icon">✦</div><div class="belief__text">We believe in the five-fold ministry gifts for the equipping of the saints.</div></div>
+      <div class="belief"><div class="belief__icon">✦</div><div class="belief__text">We believe in the Second Coming of Jesus Christ.</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ── CTA ─────────────────────────────────────────────────────────────────── -->
+<section style="background:var(--green);padding:clamp(60px,8vw,80px) 0;text-align:center">
+  <div class="container reveal">
+    <h2 style="font-family:var(--font-display);font-size:clamp(28px,4vw,44px);font-weight:400;color:white;margin-bottom:16px">
+      Come and be part of the family
+    </h2>
+    <p style="color:rgba(255,255,255,0.7);font-size:16px;margin-bottom:32px;max-width:440px;margin-left:auto;margin-right:auto">
+      We would love to meet you. Join us for a service or reach out — we're expecting you.
+    </p>
+    <div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap">
+      <a href="services.html" class="btn btn--outline">Join a Service</a>
+      <a href="contact.html" class="btn btn--gold">Get in Touch</a>
+    </div>
+  </div>
+</section>
+
+<div id="footer-placeholder"></div>
+<script src="layout.js"></script>
+<script src="nav.js"></script>
+</body>
+</html>

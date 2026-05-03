@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Podcast — The Synagogues · Words of Wisdom</title>
+  <meta name="description" content="Listen to Words of Wisdom with Apostle Glen Monama — prophetic teaching from the Word of God."/>
+  <link rel="stylesheet" href="styles.css"/>
+  <style>
+    /* ── Podcast hero ── */
+    .podcast-hero {
+      background: linear-gradient(160deg, #0d0c08 0%, #1a180e 40%, #1a2a00 100%);
+      padding: calc(var(--nav-h) + 60px) 0 80px;
+      position: relative; overflow: hidden;
+    }
+    .podcast-hero__orb {
+      position:absolute; border-radius:50%; filter:blur(80px); pointer-events:none;
+    }
+    .podcast-hero__orb--1 {
+      width:500px;height:500px;
+      background:radial-gradient(circle,rgba(69,106,2,0.25) 0%,transparent 70%);
+      top:-100px;right:-100px;
+    }
+    .podcast-hero__orb--2 {
+      width:300px;height:300px;
+      background:radial-gradient(circle,rgba(200,150,12,0.12) 0%,transparent 70%);
+      bottom:0;left:15%;
+    }
+    .podcast-hero__grid {
+      display:grid;grid-template-columns:1fr 1fr;gap:clamp(48px,8vw,100px);
+      align-items:center;position:relative;
+    }
+    .podcast-hero__eyebrow { font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold-light);font-weight:500;margin-bottom:14px; }
+    .podcast-hero__title { font-family:var(--font-display);font-size:clamp(40px,6vw,72px);font-weight:400;color:white;line-height:1.05;margin-bottom:16px; }
+    .podcast-hero__subtitle { font-family:var(--font-display);font-size:clamp(18px,2.5vw,26px);font-style:italic;color:rgba(255,255,255,0.45);margin-bottom:24px; }
+    .podcast-hero__desc { font-size:16px;color:rgba(255,255,255,0.55);line-height:1.8;margin-bottom:32px; }
+    .podcast-platforms { display:flex;gap:10px;flex-wrap:wrap;margin-top:8px; }
+    .platform-badge {
+      display:inline-flex;align-items:center;gap:8px;
+      padding:9px 16px;border-radius:2px;
+      border:1px solid rgba(255,255,255,0.15);
+      color:rgba(255,255,255,0.7);font-size:12px;font-weight:500;
+      transition:all 0.15s; white-space:nowrap;
+    }
+    .platform-badge:hover { border-color:rgba(255,255,255,0.4);color:white;background:rgba(255,255,255,0.06); }
+    .podcast-hero__art {
+      background:linear-gradient(145deg,rgba(255,255,255,0.05),rgba(255,255,255,0.02));
+      border:1px solid rgba(255,255,255,0.08);
+      border-radius:var(--r-xl);
+      padding:40px;
+      text-align:center;
+    }
+    .podcast-art-logo {
+      width:140px;height:140px;
+      border-radius:var(--r-xl);
+      margin:0 auto 20px;
+      overflow:hidden;
+      box-shadow:0 12px 48px rgba(0,0,0,0.4);
+      background:linear-gradient(145deg,var(--green-dark),var(--brown-dark));
+    }
+    .podcast-art-logo img {
+      width:100%;height:100%;object-fit:cover;display:block;
+    }
+    .podcast-art-name { font-family:var(--font-display);font-size:22px;color:white;margin-bottom:6px; }
+    .podcast-art-host { font-size:13px;color:rgba(255,255,255,0.4);letter-spacing:0.08em; }
+    .podcast-art-episodes { margin-top:20px;font-size:32px;font-family:var(--font-display);color:var(--gold-light); }
+    .podcast-art-episodes-label { font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:rgba(255,255,255,0.3); }
+
+    /* ── Player bar ── */
+    .player-bar {
+      position:fixed;bottom:0;left:0;right:0;
+      background:rgba(26,24,14,0.97);backdrop-filter:blur(20px);
+      border-top:1px solid rgba(255,255,255,0.08);
+      padding:12px 32px;
+      display:flex;align-items:center;gap:20px;
+      z-index:300;
+      transform:translateY(100%);
+      transition:transform 0.3s ease;
+    }
+    .player-bar.active { transform:translateY(0); }
+    .player-bar__art {
+      width:44px;height:44px;border-radius:var(--r-md);flex-shrink:0;
+      background:linear-gradient(135deg,var(--green-dark),var(--brown-dark));
+      display:flex;align-items:center;justify-content:center;
+      font-family:var(--font-display);font-size:18px;color:rgba(255,255,255,0.7);
+    }
+    .player-bar__info { min-width:0;flex-shrink:0;width:220px; }
+    .player-bar__title { font-size:13px;font-weight:500;color:white;overflow:hidden;text-overflow:ellipsis;white-space:nowrap; }
+    .player-bar__ep { font-size:11px;color:rgba(255,255,255,0.4);margin-top:2px; }
+    .player-bar__btn {
+      width:44px;height:44px;border-radius:50%;flex-shrink:0;
+      background:var(--green);border:none;cursor:pointer;
+      display:flex;align-items:center;justify-content:center;
+      transition:background 0.15s;
+    }
+    .player-bar__btn:hover { background:var(--green-dark); }
+    .player-bar__progress { flex:1;display:flex;align-items:center;gap:12px;min-width:0; }
+    .player-bar__time { font-size:11px;color:rgba(255,255,255,0.4);flex-shrink:0;width:36px; }
+    .player-bar__track {
+      flex:1;height:3px;background:rgba(255,255,255,0.1);border-radius:2px;
+      cursor:pointer;position:relative;
+    }
+    .player-bar__fill { height:100%;background:var(--green);border-radius:2px;transition:width 0.1s linear; }
+    .player-bar__scrubber {
+      position:absolute;top:50%;transform:translate(-50%,-50%);
+      width:12px;height:12px;border-radius:50%;background:white;
+      box-shadow:0 1px 4px rgba(0,0,0,0.4);
+    }
+    .player-bar__close {
+      background:none;border:1px solid rgba(255,255,255,0.1);border-radius:var(--r-md);
+      padding:6px 8px;cursor:pointer;color:rgba(255,255,255,0.4);
+      display:flex;transition:all 0.15s;
+    }
+    .player-bar__close:hover { color:white;border-color:rgba(255,255,255,0.3); }
+
+    /* ── Episode list ── */
+    .episodes-section { padding:clamp(60px,8vw,100px) 0; padding-bottom:120px; }
+    .episodes-header { display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:32px;flex-wrap:wrap;gap:16px; }
+    .episodes-search {
+      display:flex;align-items:center;gap:10px;
+      background:white;border:1px solid var(--border);border-radius:var(--r-md);
+      padding:10px 16px;
+    }
+    .episodes-search input {
+      border:none;outline:none;font-family:var(--font-body);font-size:14px;
+      color:var(--text);background:transparent;width:220px;
+    }
+    .episodes-search input::placeholder { color:var(--text-muted); }
+    .episodes-loading {
+      text-align:center;padding:80px;color:var(--text-muted);
+    }
+    .episodes-loading__spinner {
+      width:32px;height:32px;border:2px solid var(--border);
+      border-top-color:var(--green);border-radius:50%;
+      animation:spin 0.75s linear infinite;margin:0 auto 16px;
+    }
+    @keyframes spin { to{transform:rotate(360deg)} }
+
+    .episode {
+      display:flex;align-items:center;gap:20px;
+      padding:20px 24px;
+      background:white;border:1px solid var(--border);border-radius:var(--r-lg);
+      margin-bottom:10px;cursor:pointer;transition:all 0.2s;
+    }
+    .episode:hover { border-color:var(--green);box-shadow:0 4px 20px rgba(69,106,2,0.08); }
+    .episode.playing { background:var(--green-pale);border-color:var(--green); }
+    .episode__num {
+      width:52px;height:52px;flex-shrink:0;border-radius:var(--r-md);
+      display:flex;align-items:center;justify-content:center;
+      font-family:var(--font-display);font-size:20px;font-weight:400;
+      transition:all 0.2s;
+    }
+    .episode__info { flex:1;min-width:0; }
+    .episode__title { font-size:15px;font-weight:500;color:var(--text);margin-bottom:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap; }
+    .episode__meta { font-size:12px;color:var(--text-muted); }
+    .episode__desc { font-size:13px;color:var(--text-muted);margin-top:4px;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical; }
+    .episode__play {
+      width:40px;height:40px;border-radius:50%;flex-shrink:0;
+      border:1px solid var(--border);background:white;
+      display:flex;align-items:center;justify-content:center;
+      transition:all 0.15s;
+    }
+    .episode:hover .episode__play { background:var(--green);border-color:var(--green); }
+    .episode.playing .episode__play { background:var(--green);border-color:var(--green); }
+    .episode__play svg { transition:fill 0.15s; }
+    .episode:hover .episode__play svg,
+    .episode.playing .episode__play svg { fill:white!important; }
+
+    .episodes-error { text-align:center;padding:64px;color:var(--text-muted); }
+
+    @media(max-width:900px){
+      .podcast-hero__grid{grid-template-columns:1fr}
+      .player-bar{padding:12px 16px;gap:12px}
+      .player-bar__info{width:auto;flex:1}
+      .player-bar__progress{display:none}
+    }
+  </style>
+</head>
+<body>
+
+<div id="nav-placeholder"></div>
+
+<!-- ── HERO ───────────────────────────────────────────────────────────────── -->
+<section class="podcast-hero">
+  <div class="podcast-hero__orb podcast-hero__orb--1"></div>
+  <div class="podcast-hero__orb podcast-hero__orb--2"></div>
+  <div class="container">
+    <div class="podcast-hero__grid">
+      <div>
+        <p class="podcast-hero__eyebrow">Podcast</p>
+        <h1 class="podcast-hero__title">Words of<br>Wisdom</h1>
+        <p class="podcast-hero__subtitle">with Apostle Glen Monama</p>
+        <p class="podcast-hero__desc">
+          Prophetic, practical teaching from the Word of God. New episodes released every week — perfect for your commute, your morning devotion, or whenever you need a Word.
+        </p>
+        <div class="podcast-platforms">
+          <a href="https://media.rss.com/words-of-wisdom-with-apostle-glen-monama/feed.xml" target="_blank" class="platform-badge">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M6.18 15.64A2.18 2.18 0 0 1 8.36 17.82 2.18 2.18 0 0 1 6.18 20 2.18 2.18 0 0 1 4 17.82 2.18 2.18 0 0 1 6.18 15.64M4 4.44A15.56 15.56 0 0 1 19.56 20h-2.83A12.73 12.73 0 0 0 4 7.27V4.44m0 5.66a9.9 9.9 0 0 1 9.9 9.9h-2.83A7.07 7.07 0 0 0 4 12.93V10.1z"/></svg> RSS Feed
+          </a>
+          <a href="https://podcasts.apple.com" target="_blank" class="platform-badge">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg> Apple Podcasts
+          </a>
+          <a href="https://spotify.com" target="_blank" class="platform-badge">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 13.5a4 4 0 0 1 8 0"/><path d="M6.5 11a6.5 6.5 0 0 1 11 0"/><circle cx="12" cy="16" r="1" fill="currentColor" stroke="none"/></svg> Spotify
+          </a>
+          <a href="https://podcasts.google.com" target="_blank" class="platform-badge">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/></svg> Google Podcasts
+          </a>
+        </div>
+      </div>
+      <div class="podcast-hero__art">
+        <div class="podcast-art-logo"><img id="podcastCoverImg" src="" alt="Words of Wisdom podcast cover"/></div>
+        <div class="podcast-art-name">Words of Wisdom</div>
+        <div class="podcast-art-host">Apostle Glen Monama</div>
+        <div style="margin-top:24px;border-top:1px solid rgba(255,255,255,0.08);padding-top:20px">
+          <div class="podcast-art-episodes" id="episodeCount">—</div>
+          <div class="podcast-art-episodes-label">Episodes Available</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── EPISODES ────────────────────────────────────────────────────────────── -->
+<section class="episodes-section">
+  <div class="container">
+    <div class="episodes-header">
+      <div>
+        <p class="eyebrow">All Episodes</p>
+        <div class="divider"></div>
+        <h2 class="display display-sm">Listen</h2>
+      </div>
+      <div class="episodes-search">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        <input type="text" id="searchInput" placeholder="Search episodes…"/>
+      </div>
+    </div>
+
+    <div id="episodeList">
+      <div class="episodes-loading">
+        <div class="episodes-loading__spinner"></div>
+        <p>Loading episodes…</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── PLAYER BAR ──────────────────────────────────────────────────────────── -->
+<div class="player-bar" id="playerBar">
+  <div class="player-bar__art" style="overflow:hidden;padding:0"><img id="playerArt" src="" style="width:100%;height:100%;object-fit:cover;display:block" alt=""/></div>
+  <div class="player-bar__info">
+    <div class="player-bar__title" id="playerTitle">—</div>
+    <div class="player-bar__ep" id="playerEp">—</div>
+  </div>
+  <button class="player-bar__btn" id="playerPlayBtn" aria-label="Play/Pause">
+    <svg id="playIcon" width="16" height="16" viewBox="0 0 24 24" fill="white"><polygon points="5,3 19,12 5,21"/></svg>
+  </button>
+  <div class="player-bar__progress">
+    <span class="player-bar__time" id="currentTime">0:00</span>
+    <div class="player-bar__track" id="progressTrack">
+      <div class="player-bar__fill" id="progressFill" style="width:0%"></div>
+      <div class="player-bar__scrubber" id="progressScrubber" style="left:0%"></div>
+    </div>
+    <span class="player-bar__time" id="totalTime">0:00</span>
+  </div>
+  <button class="player-bar__close" id="playerClose" aria-label="Close player">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+  </button>
+  <audio id="audioEl" controlsList="nodownload noplaybackrate" style="display:none"></audio>
+</div>
+
+<div id="footer-placeholder"></div>
+<script src="layout.js"></script>
+<script src="nav.js"></script>
+<script>
+const RSS_URL = 'https://media.rss.com/words-of-wisdom-with-apostle-glen-monama/feed.xml';
+const RSS_PROXY = 'https://api.rss2json.com/v1/api.json?rss_url=' + encodeURIComponent(RSS_URL);
+
+let episodes = [];
+let activeEp = null;
+let isPlaying = false;
+
+const audio       = document.getElementById('audioEl');
+const playerBar   = document.getElementById('playerBar');
+const playerTitle = document.getElementById('playerTitle');
+const playerEp    = document.getElementById('playerEp');
+const playBtn     = document.getElementById('playerPlayBtn');
+const playIcon    = document.getElementById('playIcon');
+const closeBtn    = document.getElementById('playerClose');
+const fill        = document.getElementById('progressFill');
+const scrubber    = document.getElementById('progressScrubber');
+const curTime     = document.getElementById('currentTime');
+const totTime     = document.getElementById('totalTime');
+const countEl     = document.getElementById('episodeCount');
+const listEl      = document.getElementById('episodeList');
+const searchEl    = document.getElementById('searchInput');
+
+function fmtTime(s) {
+  if (!s || isNaN(s)) return '0:00';
+  const m = Math.floor(s/60), sec = Math.floor(s%60);
+  return `${m}:${String(sec).padStart(2,'0')}`;
+}
+
+function fmtDuration(raw) {
+  if (!raw) return '';
+  const parts = String(raw).split(':');
+  if (parts.length === 3) {
+    const [h,m,s] = parts;
+    return (h==='0'||h==='00') ? `${m}:${s}` : `${h}:${m}:${s}`;
+  }
+  if (parts.length === 2) return `${parts[0]}:${parts[1]}`;
+  const n = parseInt(raw);
+  if (!isNaN(n)) return fmtTime(n);
+  return raw;
+}
+
+function fmtDate(raw) {
+  if (!raw) return '';
+  try { return new Date(raw).toLocaleDateString('en-ZA',{day:'numeric',month:'short',year:'numeric'}); }
+  catch { return ''; }
+}
+
+function getTag(xml, tag) {
+  const cdata = new RegExp(`<${tag}[^>]*><!\\[CDATA\\[([\\s\\S]*?)\\]\\]><\\/${tag}>`, 'i');
+  const plain = new RegExp(`<${tag}[^>]*>([\\s\\S]*?)<\\/${tag}>`, 'i');
+  const cm = xml.match(cdata); if (cm) return cm[1].trim();
+  const pm = xml.match(plain); if (pm) return pm[1].replace(/<!\[CDATA\[([\s\S]*?)\]\]>/g,'$1').replace(/<[^>]+>/g,'').trim();
+  return '';
+}
+function getAttr(xml, tag, attr) {
+  const re = new RegExp(`<${tag}[^>]*\\s${attr}="([^"]*)"`, 'i');
+  return xml.match(re)?.[1] || '';
+}
+function decode(s) {
+  return s.replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"').replace(/&#39;/g,"'").replace(/&nbsp;/g,' ');
+}
+
+async function loadEpisodes() {
+  try {
+    const res  = await fetch(RSS_PROXY);
+    const json = await res.json();
+
+    if (json.status !== 'ok') throw new Error(json.message || 'Feed error');
+
+    // Set podcast cover image from feed
+    if (json.feed && json.feed.image) {
+      const img = document.getElementById('podcastCoverImg');
+      if (img) img.src = json.feed.image;
+    }
+
+    const items = json.items || [];
+    countEl.textContent = items.length + '+';
+
+    episodes = items.map((item, i) => ({
+      id: i,
+      title:       item.title || 'Untitled',
+      description: (item.description || item.content || '').replace(/<[^>]+>/g,'').replace(/\s+/g,' ').trim().slice(0,200),
+      pubDate:     item.pubDate,
+      duration:    item.enclosure?.duration || '',
+      audio_url:   item.enclosure?.link || '',
+      episode_num: String(items.length - i),
+    }));
+
+    renderEpisodes(episodes);
+  } catch(e) {
+    listEl.innerHTML = `
+      <div class="episodes-error">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="1.5" style="margin:0 auto 12px;display:block"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/></svg>
+        <p style="font-size:16px;margin-bottom:8px;color:var(--text-mid)">Episodes could not be loaded right now.</p>
+        <p style="font-size:14px;color:var(--text-muted)">Listen on <a href="https://media.rss.com/words-of-wisdom-with-apostle-glen-monama" target="_blank" style="color:var(--green)">RSS.com ↗</a></p>
+      </div>`;
+    countEl.textContent = '126+';
+    // Still try to show the cover image placeholder
+    const img = document.getElementById('podcastCoverImg');
+    if (img) img.src = 'https://media.rss.com/words-of-wisdom-with-apostle-glen-monama/logo_thumbnail.jpg';
+  }
+}
+
+function renderEpisodes(eps) {
+  if (!eps.length) {
+    listEl.innerHTML = '<div class="episodes-error"><p>No episodes found.</p></div>';
+    return;
+  }
+  listEl.innerHTML = eps.slice(0,50).map(ep => `
+    <div class="episode${activeEp?.id===ep.id?' playing':''}" data-id="${ep.id}">
+      <div class="episode__num" style="background:${activeEp?.id===ep.id?'var(--green)':'var(--green-pale)'};color:${activeEp?.id===ep.id?'white':'var(--green)'}">
+        ${activeEp?.id===ep.id && isPlaying
+          ? '<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16" rx="1"/><rect x="14" y="4" width="4" height="16" rx="1"/></svg>'
+          : (ep.episode_num || ep.id + 1)
+        }
+      </div>
+      <div class="episode__info">
+        <div class="episode__title">${ep.title}</div>
+        <div class="episode__meta">${fmtDate(ep.pubDate)}${ep.duration ? ' · ' + fmtDuration(ep.duration) : ''}</div>
+        ${ep.description ? `<div class="episode__desc">${ep.description}</div>` : ''}
+      </div>
+      <div class="episode__play">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="var(--green)">
+          ${activeEp?.id===ep.id && isPlaying
+            ? '<rect x="6" y="4" width="4" height="16" rx="1"/><rect x="14" y="4" width="4" height="16" rx="1"/>'
+            : '<polygon points="5,3 19,12 5,21"/>'
+          }
+        </svg>
+      </div>
+    </div>
+  `).join('');
+
+  listEl.querySelectorAll('.episode').forEach(el => {
+    el.addEventListener('click', () => {
+      const ep = episodes[parseInt(el.dataset.id)];
+      if (!ep) return;
+      if (activeEp?.id === ep.id) {
+        togglePlay();
+      } else {
+        playEp(ep);
+      }
+    });
+  });
+}
+
+function playEp(ep) {
+  activeEp = ep;
+  playerTitle.textContent = ep.title;
+  const artImg = document.getElementById('playerArt');
+  if (artImg) { const ci = document.getElementById('podcastCoverImg'); artImg.src = ci?.src || ''; }
+  playerEp.textContent = `Ep. ${ep.episode_num}${ep.duration ? ' · ' + fmtDuration(ep.duration) : ''}`;
+  if (ep.audio_url) {
+    audio.src = ep.audio_url;
+    audio.play().then(() => { isPlaying = true; updatePlayBtn(); }).catch(() => {});
+  }
+  playerBar.classList.add('active');
+  renderEpisodes(episodes.filter(e => !searchEl.value || e.title.toLowerCase().includes(searchEl.value.toLowerCase())));
+}
+
+function togglePlay() {
+  if (isPlaying) { audio.pause(); isPlaying = false; }
+  else { audio.play().then(() => { isPlaying = true; }).catch(() => {}); }
+  updatePlayBtn();
+  renderEpisodes(episodes);
+}
+
+function updatePlayBtn() {
+  playIcon.innerHTML = isPlaying
+    ? '<rect x="6" y="4" width="4" height="16" rx="1"/><rect x="14" y="4" width="4" height="16" rx="1"/>'
+    : '<polygon points="5,3 19,12 5,21"/>';
+}
+
+playBtn.addEventListener('click', togglePlay);
+closeBtn.addEventListener('click', () => {
+  audio.pause(); isPlaying = false; activeEp = null;
+  playerBar.classList.remove('active');
+  renderEpisodes(episodes);
+});
+
+audio.addEventListener('play',  () => { isPlaying = true;  updatePlayBtn(); renderEpisodes(episodes); });
+audio.addEventListener('pause', () => { isPlaying = false; updatePlayBtn(); renderEpisodes(episodes); });
+audio.addEventListener('ended', () => { isPlaying = false; updatePlayBtn(); renderEpisodes(episodes); });
+audio.addEventListener('timeupdate', () => {
+  const pct = audio.duration ? (audio.currentTime / audio.duration) * 100 : 0;
+  fill.style.width = pct + '%';
+  scrubber.style.left = pct + '%';
+  curTime.textContent = fmtTime(audio.currentTime);
+});
+audio.addEventListener('loadedmetadata', () => {
+  totTime.textContent = fmtTime(audio.duration);
+});
+
+document.getElementById('progressTrack').addEventListener('click', e => {
+  if (!audio.duration) return;
+  const rect = e.currentTarget.getBoundingClientRect();
+  audio.currentTime = ((e.clientX - rect.left) / rect.width) * audio.duration;
+});
+
+searchEl.addEventListener('input', () => {
+  const q = searchEl.value.toLowerCase();
+  renderEpisodes(q ? episodes.filter(e => e.title.toLowerCase().includes(q) || e.description.toLowerCase().includes(q)) : episodes);
+});
+
+loadEpisodes();
+</script>
+</body>
+</html>

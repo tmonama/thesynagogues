@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>The Synagogues JWC — Home of the Word</title>
+  <meta name="description" content="The Synagogues is a prophetic apostolic ministry in Vereeniging and Pretoria, committed to raising purpose-driven believers."/>
+  <link rel="stylesheet" href="styles.css"/>
+  <style>
+    /* ── Hero ── */
+    .hero__video {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+      object-fit: cover; object-position: center 30%;
+      filter: brightness(0.52) saturate(1.2);
+      z-index: 0;
+    }
+    .hero {
+      min-height: 100vh;
+      position: relative;
+      display: flex; align-items: center;
+      overflow: hidden;
+    }
+    .hero__bg {
+      position: absolute; inset: 0;
+      background: linear-gradient(160deg,
+        #0d0c08 0%,
+        #1a180e 30%,
+        #2e1f00 65%,
+        #1a2a00 100%);
+    }
+    .hero__orbs {
+      position: absolute; inset: 0; pointer-events: none;
+    }
+    .hero__orb {
+      position: absolute; border-radius: 50%;
+      filter: blur(80px);
+    }
+    .hero__orb--green {
+      width: 600px; height: 600px;
+      background: radial-gradient(circle, rgba(69,106,2,0.3) 0%, transparent 70%);
+      top: -100px; right: -100px;
+      animation: drift1 12s ease-in-out infinite;
+    }
+    .hero__orb--gold {
+      width: 400px; height: 400px;
+      background: radial-gradient(circle, rgba(200,150,12,0.15) 0%, transparent 70%);
+      bottom: 100px; left: 10%;
+      animation: drift2 15s ease-in-out infinite;
+    }
+    .hero__orb--brown {
+      width: 500px; height: 500px;
+      background: radial-gradient(circle, rgba(94,65,0,0.25) 0%, transparent 70%);
+      top: 30%; right: 30%;
+      animation: drift3 18s ease-in-out infinite;
+    }
+    @keyframes drift1 { 0%,100%{transform:translate(0,0)} 50%{transform:translate(-40px,30px)} }
+    @keyframes drift2 { 0%,100%{transform:translate(0,0)} 50%{transform:translate(30px,-20px)} }
+    @keyframes drift3 { 0%,100%{transform:translate(0,0)} 50%{transform:translate(-20px,40px)} }
+
+    .hero__grain {
+      position: absolute; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+      opacity: 0.4;
+    }
+
+    .hero__inner {
+      position: relative;
+      max-width: var(--max); margin: 0 auto;
+      padding: calc(var(--nav-h) + 40px) clamp(20px,5vw,80px) 80px;
+      width: 100%;
+    }
+
+    .hero__pre {
+      display: flex; align-items: center; gap: 12px; margin-bottom: 28px;
+    }
+    .hero__pre-line {
+      width: 40px; height: 1px;
+      background: linear-gradient(90deg, var(--gold-light), transparent);
+    }
+    .hero__pre span {
+      font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase;
+      color: var(--gold-light); font-weight: 500;
+    }
+
+    .hero__title {
+      font-family: var(--font-display);
+      font-size: clamp(56px, 9vw, 120px);
+      font-weight: 300; color: white; line-height: 1.02;
+      letter-spacing: -0.01em;
+      margin-bottom: 8px;
+    }
+    .hero__title em {
+      font-style: italic; color: var(--gold-light);
+    }
+    .hero__subtitle {
+      font-family: var(--font-display);
+      font-size: clamp(20px, 3vw, 32px);
+      font-weight: 300; font-style: italic;
+      color: rgba(255,255,255,0.45); margin-bottom: 32px;
+      letter-spacing: 0.02em;
+    }
+    .hero__verse {
+      font-size: 15px; color: rgba(255,255,255,0.45);
+      font-style: italic; max-width: 440px; line-height: 1.7;
+      margin-bottom: 48px; padding-left: 16px;
+      border-left: 2px solid rgba(200,150,12,0.4);
+    }
+    .hero__ctas { display: flex; gap: 14px; flex-wrap: wrap; }
+
+    .hero__scroll {
+      position: absolute; bottom: 40px; left: 50%;
+      transform: translateX(-50%);
+      display: flex; flex-direction: column; align-items: center; gap: 8px;
+      color: rgba(255,255,255,0.3); font-size: 10px; letter-spacing: 0.15em;
+      text-transform: uppercase; animation: bounce 2s ease-in-out infinite;
+    }
+    .hero__scroll-line {
+      width: 1px; height: 40px;
+      background: linear-gradient(180deg, rgba(200,150,12,0.5), transparent);
+    }
+    @keyframes bounce {
+      0%,100% { transform: translateX(-50%) translateY(0); }
+      50%      { transform: translateX(-50%) translateY(6px); }
+    }
+
+    .hero__badge {
+      position: absolute; top: calc(var(--nav-h) + 40px); right: clamp(20px,5vw,80px);
+      width: 120px; height: 120px;
+      background: rgba(200,150,12,0.08);
+      border: 1px solid rgba(200,150,12,0.2);
+      border-radius: 50%;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      text-align: center;
+      animation: rotate 30s linear infinite;
+    }
+    .hero__badge-text {
+      font-size: 10px; letter-spacing: 0.12em;
+      text-transform: uppercase; color: var(--gold-light);
+      line-height: 1.5;
+    }
+    @keyframes rotate { to { transform: rotate(360deg); } }
+
+    /* ── Stats strip ── */
+    .stats {
+      background: var(--green-dark);
+      padding: 40px 0;
+    }
+    .stats__grid {
+      display: grid; grid-template-columns: repeat(4, 1fr);
+      gap: 1px; background: rgba(255,255,255,0.08);
+    }
+    .stat {
+      background: var(--green-dark); padding: 32px 24px;
+      text-align: center;
+    }
+    .stat__num {
+      font-family: var(--font-display); font-size: 52px;
+      font-weight: 300; color: white; line-height: 1;
+      margin-bottom: 6px;
+    }
+    .stat__label {
+      font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase;
+      color: rgba(255,255,255,0.45);
+    }
+
+    /* ── Welcome ── */
+    .welcome {
+      padding: clamp(80px,12vw,140px) 0;
+    }
+    .welcome__grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: clamp(48px, 8vw, 100px); align-items: center;
+    }
+    .welcome__quote {
+      font-family: var(--font-display);
+      font-size: clamp(28px, 4vw, 48px);
+      font-weight: 400; font-style: italic;
+      color: var(--text); line-height: 1.3;
+      margin-bottom: 24px;
+    }
+    .welcome__quote span { color: var(--green); }
+    .welcome__text {
+      font-size: 16px; line-height: 1.8; color: var(--text-mid);
+      margin-bottom: 16px;
+    }
+    .welcome__apostle {
+      display: flex; align-items: center; gap: 14px;
+      margin-top: 32px; padding-top: 24px;
+      border-top: 1px solid var(--border);
+    }
+    .welcome__apostle-img {
+      width: 52px; height: 52px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--green), var(--brown));
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--font-display); font-size: 22px; color: white; font-style: italic;
+      flex-shrink: 0;
+    }
+    .welcome__apostle-name { font-weight: 500; font-size: 14px; }
+    .welcome__apostle-title { font-size: 12px; color: var(--text-muted); }
+
+    .welcome__visual {
+      position: relative;
+    }
+    .welcome__card {
+      background: linear-gradient(145deg, var(--text), var(--brown-dark));
+      border-radius: var(--r-xl);
+      padding: 48px;
+      color: white;
+      position: relative; overflow: hidden;
+    }
+    .welcome__card-pattern {
+      position: absolute; inset: 0;
+      background: radial-gradient(circle at 80% 20%, rgba(69,106,2,0.3) 0%, transparent 60%),
+                  radial-gradient(circle at 20% 80%, rgba(200,150,12,0.15) 0%, transparent 50%);
+    }
+    .welcome__card-content { position: relative; }
+    .welcome__card-verse {
+      font-family: var(--font-display); font-size: 24px;
+      font-style: italic; line-height: 1.5; color: rgba(255,255,255,0.9);
+      margin-bottom: 16px;
+    }
+    .welcome__card-ref {
+      font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--gold-light);
+    }
+    .welcome__float {
+      position: absolute; bottom: -20px; right: -20px;
+      width: 160px; height: 160px;
+      background: var(--green-pale);
+      border-radius: var(--r-xl);
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      text-align: center; padding: 24px;
+      box-shadow: 0 8px 32px rgba(26,24,14,0.12);
+      border: 1px solid var(--border);
+    }
+    .welcome__float-num {
+      font-family: var(--font-display); font-size: 42px;
+      color: var(--green); line-height: 1;
+    }
+    .welcome__float-label {
+      font-size: 11px; color: var(--text-muted);
+      text-transform: uppercase; letter-spacing: 0.1em; margin-top: 6px;
+    }
+
+    /* ── Services preview ── */
+    .services-preview {
+      background: var(--surface); padding: clamp(60px,10vw,100px) 0;
+    }
+    .services-preview__header {
+      text-align: center; max-width: 560px; margin: 0 auto 56px;
+    }
+    .services-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px;
+    }
+    .service-card {
+      background: white; border-radius: var(--r-lg);
+      border: 1px solid var(--border);
+      padding: 36px 28px;
+      position: relative; overflow: hidden;
+      transition: all 0.25s;
+    }
+    .service-card:hover { transform: translateY(-4px); box-shadow: 0 12px 40px rgba(26,24,14,0.1); }
+    .service-card__accent {
+      position: absolute; top: 0; left: 0; right: 0;
+      height: 3px;
+    }
+    .service-card__icon {
+      width: 48px; height: 48px; border-radius: var(--r-md);
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 20px; font-size: 22px;
+    }
+    .service-card__day {
+      font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase;
+      font-weight: 500; margin-bottom: 8px;
+    }
+    .service-card__name {
+      font-family: var(--font-display); font-size: 26px;
+      font-weight: 400; margin-bottom: 12px; line-height: 1.2;
+    }
+    .service-card__desc { font-size: 14px; color: var(--text-muted); line-height: 1.7; }
+    .service-card__time {
+      margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--border);
+      font-size: 13px; color: var(--text-mid); font-weight: 500;
+    }
+
+    /* ── Mission strip ── */
+    .mission {
+      background: linear-gradient(135deg, var(--text) 0%, var(--brown-dark) 50%, var(--green-dark) 100%);
+      padding: clamp(80px,12vw,120px) 0;
+      text-align: center; position: relative; overflow: hidden;
+    }
+    .mission__pattern {
+      position: absolute; inset: 0;
+      background: repeating-linear-gradient(
+        45deg,
+        rgba(255,255,255,0.01) 0px, rgba(255,255,255,0.01) 1px,
+        transparent 1px, transparent 40px
+      );
+    }
+    .mission__content { position: relative; max-width: 760px; margin: 0 auto; }
+    .mission__verse {
+      font-family: var(--font-display);
+      font-size: clamp(26px, 4vw, 52px);
+      font-style: italic; font-weight: 400;
+      color: white; line-height: 1.35;
+      margin-bottom: 20px;
+    }
+    .mission__ref { color: var(--gold-light); font-size: 14px; letter-spacing: 0.1em; }
+
+    /* ── Campuses ── */
+    .campuses { padding: clamp(60px,10vw,100px) 0; }
+    .campuses__header { text-align: center; margin-bottom: 48px; }
+    .campuses__grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+    .campus-card {
+      background: linear-gradient(145deg, var(--text), var(--brown-dark) 120%);
+      border-radius: var(--r-xl); padding: 48px;
+      color: white; position: relative; overflow: hidden;
+      transition: transform 0.25s;
+    }
+    .campus-card:hover { transform: translateY(-3px); }
+    .campus-card--green {
+      background: linear-gradient(145deg, var(--green-dark), var(--text) 150%);
+    }
+    .campus-card__city {
+      font-family: var(--font-display); font-size: 42px;
+      font-weight: 300; margin-bottom: 8px;
+    }
+    .campus-card__name { font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: rgba(255,255,255,0.45); margin-bottom: 20px; }
+    .campus-card__detail { font-size: 14px; color: rgba(255,255,255,0.6); line-height: 1.8; }
+    .campus-card__glow {
+      position: absolute; bottom: -60px; right: -60px;
+      width: 200px; height: 200px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(200,150,12,0.12) 0%, transparent 70%);
+    }
+
+    /* Responsive */
+    @media (max-width:900px) {
+      .welcome__grid { grid-template-columns: 1fr; }
+      .welcome__float { display: none; }
+      .services-grid { grid-template-columns: 1fr; }
+      .campuses__grid { grid-template-columns: 1fr; }
+      .stats__grid { grid-template-columns: 1fr 1fr; }
+      .hero__badge { display: none; }
+    }
+    @media (max-width:600px) {
+      .hero__ctas { flex-direction: column; }
+      .hero__ctas .btn { text-align: center; justify-content: center; }
+      .stats__grid { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<div id="nav-placeholder"></div>
+
+<!-- ── HERO ───────────────────────────────────────────────────────────────── -->
+<section class="hero">
+  <!-- Tree video background -->
+  <video class="hero__video"
+    src="https://videos.pexels.com/video-files/856973/856973-uhd_2560_1440_25fps.mp4"
+    autoplay loop muted playsinline
+    poster="https://images.pexels.com/videos/856973/free-video-856973.jpg?auto=compress&cs=tinysrgb&fit=crop&h=630&w=1200">
+  </video>
+  <div class="hero__bg"></div>
+  <div class="hero__orbs">
+    <div class="hero__orb hero__orb--green"></div>
+    <div class="hero__orb hero__orb--gold"></div>
+    <div class="hero__orb hero__orb--brown"></div>
+  </div>
+  <div class="hero__grain"></div>
+
+  <div class="hero__inner">
+    <div class="hero__pre anim-up">
+      <div class="hero__pre-line"></div>
+      <span>Home of the Word</span>
+    </div>
+
+    <h1 class="hero__title anim-up-2">
+      The<br><em>Synagogues</em>
+    </h1>
+    <p class="hero__subtitle anim-up-3">Vereeniging · Pretoria</p>
+
+    <p class="hero__verse anim-up-3">
+      "My house shall be called a house of prayer for all nations."<br>
+      <span style="font-size:12px;letter-spacing:0.1em;color:rgba(255,255,255,0.35)">— Isaiah 56:7</span>
+    </p>
+
+    <div class="hero__ctas anim-up-4">
+      <a href="services.html" class="btn btn--primary">Join a Service</a>
+      <a href="about.html" class="btn btn--outline">Our Story</a>
+    </div>
+  </div>
+
+  <div class="hero__badge">
+    <span class="hero__badge-text">Est.<br>—<br>Vereeniging</span>
+  </div>
+
+  <div class="hero__scroll">
+    <div class="hero__scroll-line"></div>
+    <span>Scroll</span>
+  </div>
+</section>
+
+<!-- ── STATS ──────────────────────────────────────────────────────────────── -->
+<div class="stats">
+  <div class="container">
+    <div class="stats__grid stagger">
+      <div class="stat">
+        <div class="stat__num">2</div>
+        <div class="stat__label">Campuses</div>
+      </div>
+      <div class="stat">
+        <div class="stat__num">3+</div>
+        <div class="stat__label">Weekly Services</div>
+      </div>
+      <div class="stat">
+        <div class="stat__num">126+</div>
+        <div class="stat__label">Podcast Episodes</div>
+      </div>
+      <div class="stat">
+        <div class="stat__num">∞</div>
+        <div class="stat__label">Kingdom Impact</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── WELCOME ─────────────────────────────────────────────────────────────── -->
+<section class="welcome">
+  <div class="container">
+    <div class="welcome__grid">
+      <div class="reveal">
+        <p class="eyebrow">Welcome</p>
+        <div class="divider"></div>
+        <h2 class="welcome__quote">
+          Raising a generation of <span>purpose-driven believers</span> who carry the Kingdom of God.
+        </h2>
+        <p class="welcome__text">
+          The Synagogues JWC was officially launched on 5 June 2010 in Pretoria by Apostle Glen Monama. What began with his wife and four children in a home has grown into a multi-campus ministry spanning Vereeniging, Sonlandpark and Pretoria East.
+        </p>
+        <p class="welcome__text">
+          Our calling is to teach an undiluted and uncompromised Word, without fear or favour — and to raise a people who walk in purpose. Whether you are seeking God for the first time or going deeper, you are welcome here.
+        </p>
+        <div class="welcome__apostle">
+          <div class="welcome__apostle-img">G</div>
+          <div>
+            <p class="welcome__apostle-name">Apostle Glen Monama</p>
+            <p class="welcome__apostle-title">Senior Pastor & Founder</p>
+          </div>
+          <a href="https://apostleglenmonama.com" target="_blank" rel="noopener"
+             class="btn btn--outline-dark" style="margin-left:auto;font-size:11px;padding:8px 14px">
+            Visit Website ↗
+          </a>
+        </div>
+      </div>
+      <div class="welcome__visual reveal">
+        <div class="welcome__card">
+          <div class="welcome__card-pattern"></div>
+          <div class="welcome__card-content">
+            <p class="welcome__card-verse">
+              "For I know the plans I have for you, declares the Lord, plans to prosper you and not to harm you, plans to give you hope and a future."
+            </p>
+            <p class="welcome__card-ref">Jeremiah 29:11</p>
+          </div>
+        </div>
+        <div class="welcome__float">
+          <div class="welcome__float-num">126+</div>
+          <div class="welcome__float-label">Podcast Episodes</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── SERVICES PREVIEW ────────────────────────────────────────────────────── -->
+<section class="services-preview">
+  <div class="container">
+    <div class="services-preview__header reveal">
+      <p class="eyebrow">Join Us</p>
+      <div class="divider divider--center"></div>
+      <h2 class="display display-sm" style="margin-bottom:12px">Our Services</h2>
+      <p style="color:var(--text-muted);font-size:16px;line-height:1.7">
+        Three opportunities each week to encounter God, grow in faith, and connect with community.
+      </p>
+    </div>
+    <div class="services-grid stagger">
+      <div class="service-card">
+        <div class="service-card__accent" style="background:linear-gradient(90deg,var(--green),var(--green-light))"></div>
+        <div class="service-card__icon" style="background:var(--green-pale);color:var(--green)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="12" y1="2" x2="12" y2="8"/><path d="M5 10a7 7 0 0 0 14 0"/><line x1="12" y1="17" x2="12" y2="22"/><line x1="9" y1="20" x2="15" y2="20"/></svg></div>
+        <p class="service-card__day" style="color:var(--green)">Every Friday</p>
+        <h3 class="service-card__name">Night Prayer</h3>
+        <p class="service-card__desc">A sacred time of intercession, worship and seeking the face of God together as a family.</p>
+        <p class="service-card__time"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> 18:00 — Both Campuses</p>
+      </div>
+      <div class="service-card">
+        <div class="service-card__accent" style="background:linear-gradient(90deg,var(--brown),var(--gold))"></div>
+        <div class="service-card__icon" style="background:#faf3e8;color:var(--brown)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="12" y1="2" x2="12" y2="22"/><line x1="5" y1="8" x2="19" y2="8"/></svg></div>
+        <p class="service-card__day" style="color:var(--brown)">Every Sunday</p>
+        <h3 class="service-card__name">Sunday Service</h3>
+        <p class="service-card__desc">Our main gathering — powerful worship, prophetic preaching and community fellowship.</p>
+        <p class="service-card__time"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--brown)" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> 10:00 — Both Campuses</p>
+      </div>
+      <div class="service-card">
+        <div class="service-card__accent" style="background:linear-gradient(90deg,var(--gold),var(--gold-light))"></div>
+        <div class="service-card__icon" style="background:#fdf8ea;color:var(--gold)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
+        <p class="service-card__day" style="color:var(--gold)">7th Week Sunday</p>
+        <h3 class="service-card__name">Special Service</h3>
+        <p class="service-card__desc">Every seventh week we gather for an extended, special service of celebration, deeper ministry and impartation.</p>
+        <p class="service-card__time"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--brown)" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> 10:00 — Combined Service</p>
+      </div>
+    </div>
+    <div style="text-align:center;margin-top:40px">
+      <a href="services.html" class="btn btn--primary">View All Services →</a>
+    </div>
+  </div>
+</section>
+
+<!-- ── MISSION STRIP ───────────────────────────────────────────────────────── -->
+<section class="mission">
+  <div class="mission__pattern"></div>
+  <div class="container">
+    <div class="mission__content reveal">
+      <p class="eyebrow" style="color:var(--gold-light);margin-bottom:16px">Our Mission</p>
+      <p class="mission__verse">
+        "To raise a generation of purpose-driven believers who carry the Kingdom of God to every sphere of society — to teach an undiluted and uncompromised Word, without fear or favour."
+      </p>
+      <p class="mission__ref">— The Synagogues Vision Statement</p>
+      <div style="margin-top:36px;display:flex;gap:14px;justify-content:center;flex-wrap:wrap">
+        <a href="about.html" class="btn btn--outline">Our Story</a>
+        <a href="contact.html" class="btn btn--gold">Get Connected</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── CAMPUSES ────────────────────────────────────────────────────────────── -->
+<section class="campuses">
+  <div class="container">
+    <div class="campuses__header reveal">
+      <p class="eyebrow">Where We Are</p>
+      <div class="divider divider--center"></div>
+      <h2 class="display display-sm">Our Campuses</h2>
+    </div>
+    <div class="campuses__grid stagger">
+      <div class="campus-card">
+        <div class="campus-card__city">Vereeniging</div>
+        <p class="campus-card__name">Headquarters</p>
+        <p class="campus-card__detail">
+          The Synagogues JWC<br>
+          Sonlandpark, Vereeniging, 1929<br><br>
+          📞 info@thesynagogues.com
+        </p>
+        <div class="campus-card__glow"></div>
+      </div>
+      <div class="campus-card campus-card--green">
+        <div class="campus-card__city">Pretoria</div>
+        <p class="campus-card__name">Pretoria East Campus</p>
+        <p class="campus-card__detail">
+          The Synagogues Pretoria East<br>
+          Pretoria, Gauteng<br><br>
+          📧 info@thesynagogues.com
+        </p>
+        <div class="campus-card__glow"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── PODCAST TEASER ──────────────────────────────────────────────────────── -->
+<section style="background:var(--surface);padding:clamp(60px,8vw,100px) 0">
+  <div class="container">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center" class="reveal">
+      <div>
+        <p class="eyebrow">Podcast</p>
+        <div class="divider"></div>
+        <h2 class="display display-sm" style="margin-bottom:16px">Words of Wisdom</h2>
+        <p style="font-size:16px;color:var(--text-muted);line-height:1.8;margin-bottom:28px">
+          Words of Wisdom with Apostle Glen Monama — prophetic, practical teaching from the Word of God. New episodes released every week. Perfect for your commute, morning devotion, or whenever you need a Word from God.
+        </p>
+        <a href="podcast.html" class="btn btn--primary">Listen Now →</a>
+      </div>
+      <div style="background:linear-gradient(145deg,var(--text),var(--brown-dark));border-radius:var(--r-xl);padding:40px;color:white;position:relative;overflow:hidden">
+        <div style="position:absolute;inset:0;background:radial-gradient(circle at 80% 20%,rgba(69,106,2,0.3) 0%,transparent 60%)"></div>
+        <div style="position:relative">
+          <p style="font-size:11px;letter-spacing:0.16em;text-transform:uppercase;color:var(--gold-light);margin-bottom:16px">Latest Episode</p>
+          <p style="font-family:var(--font-display);font-size:24px;font-style:italic;color:white;line-height:1.4;margin-bottom:24px">"The Cost of Ungratefulness"</p>
+          <p style="font-size:13px;color:rgba(255,255,255,0.5);margin-bottom:24px">Sunday Service Series · 8 March 2026</p>
+          <a href="podcast.html" style="display:inline-flex;align-items:center;gap:10px;background:var(--green);color:white;padding:12px 20px;border-radius:2px;font-size:13px;font-weight:500">
+            <span style="width:28px;height:28px;background:rgba(255,255,255,0.15);border-radius:50%;display:flex;align-items:center;justify-content:center">&#9654;</span>
+            Play Episode
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── CTA STRIP ───────────────────────────────────────────────────────────── -->
+<section class="section--green" style="padding:clamp(60px,8vw,80px) 0;text-align:center">
+  <div class="container reveal">
+    <p style="font-family:var(--font-display);font-size:clamp(28px,4vw,48px);font-weight:400;margin-bottom:16px">
+      You are welcome here
+    </p>
+    <p style="font-size:16px;color:rgba(255,255,255,0.75);margin-bottom:32px;max-width:480px;margin-left:auto;margin-right:auto;line-height:1.7">
+      Whatever your story, wherever you come from — there is a seat at The Synagogues JWC for you. Come and encounter God.
+    </p>
+    <div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap">
+      <a href="services.html" class="btn btn--outline">Plan Your Visit</a>
+      <a href="contact.html" class="btn btn--gold">Connect With Us</a>
+    </div>
+  </div>
+</section>
+
+<div id="footer-placeholder"></div>
+
+<script src="layout.js"></script>
+<script src="nav.js"></script>
+</body>
+</html>
