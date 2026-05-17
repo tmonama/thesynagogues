@@ -252,9 +252,11 @@
 </section>
 
 <div id="footer-placeholder"></div>
-<script src="layout.js"></script><script src="nav.js"></script>
+<script src="layout.js"></script>
+<script src="nav.js"></script>
+<script src="config.js"></script>
 <script>
-const API = 'https://campushub-api-8x2k.onrender.com/api/contact';
+const API = `${CONFIG.API}/api/contact`;
 
 async function submitForm() {
   const btn      = document.getElementById('submitBtn');
