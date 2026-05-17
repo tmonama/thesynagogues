@@ -77,6 +77,7 @@
       text-align:center; padding:64px; color:var(--text-muted); grid-column:span 3;
     }
     .no-events__icon { font-size:48px; margin-bottom:12px; opacity:0.4; }
+    @keyframes spin { to { transform: rotate(360deg); } }
 
     @media (max-width:900px) {
       .events-grid, .reg-grid { grid-template-columns:1fr; }
@@ -118,154 +119,9 @@
     </div>
 
     <div class="events-grid" id="eventsGrid">
-      <!-- 7th Week Service -->
-      <div class="event-card" data-tags="service special vereeniging pretoria">
-        <div class="event-card__header">
-          <div class="event-card__date" style="background:var(--green-pale)">
-            <div class="event-card__date-day" style="color:var(--green)">27</div>
-            <div class="event-card__date-month" style="color:var(--green)">Apr</div>
-          </div>
-          <div>
-            <p class="event-card__type" style="color:var(--gold)">7th Week Service</p>
-            <h3 class="event-card__title">Special Sunday Service</h3>
-          </div>
-        </div>
-        <div class="event-card__body">
-          <p class="event-card__desc">Our special 7th week combined service — both campuses coming together for an extended time of worship, ministry and prophetic impartation.</p>
-          <div class="event-card__meta">
-            <div class="event-card__meta-item">🕙 <span>10:00 AM — Extended service</span></div>
-            <div class="event-card__meta-item">📍 <span>Combined — Both Campuses</span></div>
-          </div>
-        </div>
-        <div class="event-card__footer">
-          <span class="event-card__campus">All Campuses</span>
-          <a href="services.html#seventh" class="event-card__link">Learn more →</a>
-        </div>
-      </div>
-
-      <!-- Friday Night Prayer -->
-      <div class="event-card" data-tags="service vereeniging pretoria">
-        <div class="event-card__header">
-          <div class="event-card__date" style="background:#eef4e0">
-            <div class="event-card__date-day" style="color:var(--green)">18</div>
-            <div class="event-card__date-month" style="color:var(--green)">Apr</div>
-          </div>
-          <div>
-            <p class="event-card__type" style="color:var(--green)">Weekly Service</p>
-            <h3 class="event-card__title">Friday Night Prayer</h3>
-          </div>
-        </div>
-        <div class="event-card__body">
-          <p class="event-card__desc">Our weekly prayer gathering — come and seek the face of God with the church family. Deep intercession, powerful worship, Spirit-led ministry.</p>
-          <div class="event-card__meta">
-            <div class="event-card__meta-item">🕖 <span>18:00 — Every Friday</span></div>
-            <div class="event-card__meta-item">📍 <span>Both Campuses</span></div>
-          </div>
-        </div>
-        <div class="event-card__footer">
-          <span class="event-card__campus">Both Campuses</span>
-          <a href="services.html#friday" class="event-card__link">Learn more →</a>
-        </div>
-      </div>
-
-      <!-- Sunday Service -->
-      <div class="event-card" data-tags="service vereeniging pretoria">
-        <div class="event-card__header">
-          <div class="event-card__date" style="background:#faf3e8">
-            <div class="event-card__date-day" style="color:var(--brown)">20</div>
-            <div class="event-card__date-month" style="color:var(--brown)">Apr</div>
-          </div>
-          <div>
-            <p class="event-card__type" style="color:var(--brown)">Weekly Service</p>
-            <h3 class="event-card__title">Sunday Service</h3>
-          </div>
-        </div>
-        <div class="event-card__body">
-          <p class="event-card__desc">Our main weekly gathering — powerful worship, prophetic preaching and community fellowship. New visitors always welcome.</p>
-          <div class="event-card__meta">
-            <div class="event-card__meta-item">🕙 <span>10:00 AM — Every Sunday</span></div>
-            <div class="event-card__meta-item">📍 <span>Both Campuses</span></div>
-          </div>
-        </div>
-        <div class="event-card__footer">
-          <span class="event-card__campus">Both Campuses</span>
-          <a href="services.html#sunday" class="event-card__link">Learn more →</a>
-        </div>
-      </div>
-
-      <!-- May 7th Week -->
-      <div class="event-card" data-tags="service special vereeniging pretoria">
-        <div class="event-card__header">
-          <div class="event-card__date" style="background:var(--green-pale)">
-            <div class="event-card__date-day" style="color:var(--green)">18</div>
-            <div class="event-card__date-month" style="color:var(--green)">May</div>
-          </div>
-          <div>
-            <p class="event-card__type" style="color:var(--gold)">7th Week Service</p>
-            <h3 class="event-card__title">Special Sunday Service</h3>
-          </div>
-        </div>
-        <div class="event-card__body">
-          <p class="event-card__desc">Mark your calendar — another special 7th week gathering where both campuses combine for a powerful time of ministry and celebration.</p>
-          <div class="event-card__meta">
-            <div class="event-card__meta-item">🕙 <span>10:00 AM — Extended service</span></div>
-            <div class="event-card__meta-item">📍 <span>Combined — Both Campuses</span></div>
-          </div>
-        </div>
-        <div class="event-card__footer">
-          <span class="event-card__campus">All Campuses</span>
-          <a href="services.html#seventh" class="event-card__link">Learn more →</a>
-        </div>
-      </div>
-
-      <!-- Youth Event -->
-      <div class="event-card" data-tags="special vereeniging">
-        <div class="event-card__header">
-          <div class="event-card__date" style="background:#fdf3e0">
-            <div class="event-card__date-day" style="color:var(--gold)">10</div>
-            <div class="event-card__date-month" style="color:var(--gold)">May</div>
-          </div>
-          <div>
-            <p class="event-card__type" style="color:var(--gold)">Special Event</p>
-            <h3 class="event-card__title">Youth Day Service</h3>
-          </div>
-        </div>
-        <div class="event-card__body">
-          <p class="event-card__desc">A special service honouring and celebrating the youth — the future leaders of the Kingdom. Come hear a word specifically for the next generation.</p>
-          <div class="event-card__meta">
-            <div class="event-card__meta-item">🕙 <span>10:00 AM</span></div>
-            <div class="event-card__meta-item">📍 <span>Vereeniging HQ</span></div>
-          </div>
-        </div>
-        <div class="event-card__footer">
-          <span class="event-card__campus">Vereeniging</span>
-          <a href="contact.html" class="event-card__link">RSVP →</a>
-        </div>
-      </div>
-
-      <!-- June 7th Week -->
-      <div class="event-card" data-tags="service special vereeniging pretoria">
-        <div class="event-card__header">
-          <div class="event-card__date" style="background:var(--green-pale)">
-            <div class="event-card__date-day" style="color:var(--green)">08</div>
-            <div class="event-card__date-month" style="color:var(--green)">Jun</div>
-          </div>
-          <div>
-            <p class="event-card__type" style="color:var(--gold)">7th Week Service</p>
-            <h3 class="event-card__title">Special Sunday Service</h3>
-          </div>
-        </div>
-        <div class="event-card__body">
-          <p class="event-card__desc">Another landmark 7th week service. Set aside the day and come expectant for what God will do in this extended gathering.</p>
-          <div class="event-card__meta">
-            <div class="event-card__meta-item">🕙 <span>10:00 AM — Extended service</span></div>
-            <div class="event-card__meta-item">📍 <span>Combined — Both Campuses</span></div>
-          </div>
-        </div>
-        <div class="event-card__footer">
-          <span class="event-card__campus">All Campuses</span>
-          <a href="services.html#seventh" class="event-card__link">Learn more →</a>
-        </div>
+      <div class="no-events" style="grid-column:span 3" id="eventsLoading">
+        <div class="no-events__icon" style="animation:spin 1s linear infinite;display:inline-block">⏳</div>
+        <p>Loading events…</p>
       </div>
     </div>
   </div>
@@ -327,22 +183,141 @@
 <div id="footer-placeholder"></div>
 <script src="layout.js"></script>
 <script src="nav.js"></script>
+<script src="config.js"></script>
 <script>
-  // Filter logic
-  const chips = document.querySelectorAll('.filter-chip');
-  const cards = document.querySelectorAll('.event-card');
+  const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 
-  chips.forEach(chip => {
-    chip.addEventListener('click', () => {
-      chips.forEach(c => c.classList.remove('active'));
-      chip.classList.add('active');
-      const filter = chip.dataset.filter;
-      cards.forEach(card => {
-        const tags = card.dataset.tags || '';
-        card.style.display = (filter === 'all' || tags.includes(filter)) ? '' : 'none';
+  // ── Map event fields to card colours ──────────────────────────────────────
+  function styleForType(type) {
+    const t = (type || '').toLowerCase();
+    if (t.includes('special') || t.includes('seventh') || t.includes('conference') ||
+        t.includes('youth')   || t.includes('children')) {
+      return { accent: 'var(--gold)',  bg: '#fdf3e0' };
+    }
+    if (t.includes('prayer')) {
+      return { accent: 'var(--green)', bg: '#eef4e0' };
+    }
+    return   { accent: 'var(--green)', bg: 'var(--green-pale)' };
+  }
+
+  // ── Build filter tags from campus + type ──────────────────────────────────
+  function tagsFor(ev) {
+    const campus = (ev.campus || 'all').toLowerCase().trim();
+    const type   = (ev.event_type || ev.title || '').toLowerCase();
+    const tags   = [];
+
+    // Campus — DB stores: 'all', 'vereeniging', 'pretoria', 'both'
+    const bothCampuses = campus === 'all' || campus === 'both';
+    if (bothCampuses || campus.includes('vereeniging')) tags.push('vereeniging');
+    if (bothCampuses || campus.includes('pretoria'))    tags.push('pretoria');
+
+    // Type — derive from event_type field or title keywords
+    if (type.includes('service') || type.includes('prayer') ||
+        type.includes('sunday')  || type.includes('friday')) {
+      tags.push('service');
+    }
+    if (type.includes('special')     || type.includes('conference') ||
+        type.includes('youth')       || type.includes('seventh')    ||
+        type.includes('children')    || type.includes('7th')) {
+      tags.push('special');
+    }
+    // Every event appears under "All Events" — ensure at least one tag
+    if (!tags.some(t => t === 'service' || t === 'special')) tags.push('service');
+
+    return tags.join(' ');
+  }
+
+  // ── Render one event card ─────────────────────────────────────────────────
+  function renderCard(ev) {
+    const d      = new Date(ev.starts_at * 1000);
+    const day    = d.getDate();
+    const month  = MONTHS[d.getMonth()];
+    const time   = d.toLocaleTimeString('en-ZA', { hour: '2-digit', minute: '2-digit' });
+    const style  = styleForType(ev.event_type);
+    const tags   = tagsFor(ev);
+    const campus = ev.campus || 'Both Campuses';
+
+    return `
+      <div class="event-card" data-tags="${tags}">
+        <div class="event-card__header">
+          <div class="event-card__date" style="background:${style.bg}">
+            <div class="event-card__date-day"   style="color:${style.accent}">${day}</div>
+            <div class="event-card__date-month" style="color:${style.accent}">${month}</div>
+          </div>
+          <div>
+            <p class="event-card__type" style="color:${style.accent}">${ev.event_type || 'Event'}</p>
+            <h3 class="event-card__title">${ev.title}</h3>
+          </div>
+        </div>
+        <div class="event-card__body">
+          ${ev.description ? `<p class="event-card__desc">${ev.description}</p>` : ''}
+          <div class="event-card__meta">
+            <div class="event-card__meta-item">🕙 <span>${time}</span></div>
+            ${ev.location ? `<div class="event-card__meta-item">📍 <span>${ev.location}</span></div>` : ''}
+          </div>
+        </div>
+        <div class="event-card__footer">
+          <span class="event-card__campus">${campus}</span>
+          ${ev.registration_url
+            ? `<a href="${ev.registration_url}" target="_blank" class="event-card__link">Register →</a>`
+            : ''}
+        </div>
+      </div>`;
+  }
+
+  // ── Filter chip logic (works on dynamic cards) ────────────────────────────
+  function attachFilters() {
+    const chips = document.querySelectorAll('.filter-chip');
+    const grid  = document.getElementById('eventsGrid');
+    chips.forEach(chip => {
+      chip.addEventListener('click', () => {
+        chips.forEach(c => c.classList.remove('active'));
+        chip.classList.add('active');
+        const filter = chip.dataset.filter;
+        grid.querySelectorAll('.event-card').forEach(card => {
+          const tags = card.dataset.tags || '';
+          card.style.display = (filter === 'all' || tags.includes(filter)) ? '' : 'none';
+        });
       });
     });
-  });
+  }
+
+  // ── Fetch and render ──────────────────────────────────────────────────────
+  async function loadEvents() {
+    const grid = document.getElementById('eventsGrid');
+    const now  = Math.floor(Date.now() / 1000);
+
+    try {
+      const res  = await fetch(`${CONFIG.API}/api/events?visibility=public&upcoming=true`);
+      const data = await res.json();
+
+      // Sort ascending (API already does this, but belt-and-suspenders)
+      const evs = (data.events || []).sort((a, b) => a.starts_at - b.starts_at);
+
+      if (!evs.length) {
+        grid.innerHTML = `
+          <div class="no-events">
+            <div class="no-events__icon">📅</div>
+            <p style="font-size:16px;font-weight:500">No upcoming events right now.</p>
+            <p style="font-size:14px;margin-top:8px">Check back soon — we add events regularly.</p>
+          </div>`;
+        return;
+      }
+
+      grid.innerHTML = evs.map(renderCard).join('');
+      attachFilters();
+
+    } catch (_) {
+      grid.innerHTML = `
+        <div class="no-events">
+          <div class="no-events__icon">⚠️</div>
+          <p style="font-size:16px;font-weight:500">Couldn't load events right now.</p>
+          <p style="font-size:14px;margin-top:8px">Please try again later or <a href="contact.html" style="color:var(--green)">contact us</a>.</p>
+        </div>`;
+    }
+  }
+
+  loadEvents();
 </script>
 </body>
 </html>
