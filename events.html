@@ -73,6 +73,24 @@
     .reg-card__name { font-family:var(--font-display); font-size:22px; font-weight:400; margin-bottom:8px; }
     .reg-card__time { font-size:14px; color:var(--text-mid); }
 
+
+    .event-card__image { width:100%; height:160px; object-fit:cover; display:block; }
+    .event-card__recur { display:inline-block; margin-top:6px; font-size:11px; color:var(--green); background:var(--green-pale); padding:3px 9px; border-radius:99px; font-weight:600; }
+    .event-card__desc-truncated { display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; }
+    .event-card__seemore { font-size:13px; color:var(--green); font-weight:600; cursor:pointer; margin-top:4px; display:inline-block; }
+    .event-card__seemore:hover { text-decoration:underline; }
+    .ev-modal-overlay { position:fixed; inset:0; background:rgba(26,24,14,0.6); z-index:1000; display:none; align-items:center; justify-content:center; padding:20px; }
+    .ev-modal-overlay.open { display:flex; }
+    .ev-modal { background:#fff; border-radius:16px; max-width:560px; width:100%; max-height:90vh; overflow-y:auto; position:relative; box-shadow:0 24px 80px rgba(0,0,0,0.3); }
+    .ev-modal__image { width:100%; height:240px; object-fit:cover; display:block; border-radius:16px 16px 0 0; }
+    .ev-modal__close { position:absolute; top:14px; right:14px; background:rgba(0,0,0,0.5); color:#fff; border:none; width:34px; height:34px; border-radius:50%; font-size:20px; cursor:pointer; display:flex; align-items:center; justify-content:center; z-index:2; }
+    .ev-modal__body { padding:28px; }
+    .ev-modal__type { font-size:11px; letter-spacing:0.14em; text-transform:uppercase; font-weight:600; margin-bottom:8px; }
+    .ev-modal__title { font-family:var(--font-display); font-size:26px; font-weight:400; line-height:1.2; margin-bottom:16px; color:var(--text); }
+    .ev-modal__meta { display:flex; flex-direction:column; gap:10px; margin-bottom:20px; padding-bottom:20px; border-bottom:1px solid var(--border); }
+    .ev-modal__meta-item { display:flex; align-items:center; gap:10px; font-size:14px; color:var(--text-mid); }
+    .ev-modal__desc { font-size:15px; line-height:1.8; color:var(--text-muted); white-space:pre-wrap; }
+    .ev-modal__register { display:inline-block; margin-top:20px; background:var(--green); color:#fff; padding:12px 28px; border-radius:99px; font-size:14px; font-weight:600; text-decoration:none; }
     .no-events {
       text-align:center; padding:64px; color:var(--text-muted); grid-column:span 3;
     }
@@ -227,43 +245,130 @@
     return tags.join(' ');
   }
 
+  // Holds the full event objects so the modal can read them by index
+  let EVENTS = [];
+  const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const DESC_LIMIT = 120;
+
+  // ── Recurrence helpers ────────────────────────────────────────────────────
+  const PATTERN_LABEL = {
+    daily: 'Every day', weekly: 'Weekly', biweekly: 'Every 2 weeks', monthly: 'Monthly'
+  };
+  // Human label like "Every Sunday" / "Every 2 weeks" / "Monthly"
+  function recurrenceLabel(ev, dateObj) {
+    if (!ev.is_recurring) return '';
+    const p = ev.recurrence_pattern;
+    if (p === 'weekly')  return 'Every ' + dateObj.toLocaleDateString('en-ZA', { weekday: 'long' });
+    if (p === 'daily')   return 'Every day';
+    if (p === 'biweekly')return 'Every 2 weeks';
+    if (p === 'monthly') return 'Monthly';
+    return PATTERN_LABEL[p] || 'Recurring';
+  }
+  // Returns the next occurrence >= now for a recurring event (or its start date otherwise)
+  function nextOccurrence(ev) {
+    const start = new Date(ev.starts_at * 1000);
+    if (!ev.is_recurring || !ev.recurrence_pattern || ev.recurrence_pattern === 'none') return start;
+    const now = new Date();
+    const until = ev.recurrence_end_date ? new Date(ev.recurrence_end_date * 1000) : null;
+    if (start >= now) return start;
+    const step = (d) => {
+      const n = new Date(d);
+      switch (ev.recurrence_pattern) {
+        case 'daily':    n.setDate(n.getDate() + 1); break;
+        case 'weekly':   n.setDate(n.getDate() + 7); break;
+        case 'biweekly': n.setDate(n.getDate() + 14); break;
+        case 'monthly':  n.setMonth(n.getMonth() + 1); break;
+        default:         n.setDate(n.getDate() + 7);
+      }
+      return n;
+    };
+    let d = new Date(start), guard = 0;
+    while (d < now && guard < 5000) { d = step(d); guard++; }
+    if (until && d > until) return until; // recurrence has ended; fall back
+    return d;
+  }
+
   // ── Render one event card ─────────────────────────────────────────────────
-  function renderCard(ev) {
-    const d      = new Date(ev.starts_at * 1000);
+  function renderCard(ev, idx) {
+    const d      = nextOccurrence(ev);
     const day    = d.getDate();
     const month  = MONTHS[d.getMonth()];
     const time   = d.toLocaleTimeString('en-ZA', { hour: '2-digit', minute: '2-digit' });
     const style  = styleForType(ev.event_type);
     const tags   = tagsFor(ev);
     const campus = ev.campus || 'Both Campuses';
+    const desc   = ev.description || '';
+    const isLong = desc.length > DESC_LIMIT;
+    const shortDesc = isLong ? esc(desc.slice(0, DESC_LIMIT)).trim() + '…' : esc(desc);
+    const recurLabel = recurrenceLabel(ev, d);
+    const nextStr = d.toLocaleDateString('en-ZA', { weekday:'short', day:'numeric', month:'short' });
 
     return `
       <div class="event-card" data-tags="${tags}">
+        ${ev.image_url ? `<img class="event-card__image" src="${esc(ev.image_url)}" alt="${esc(ev.title)}" onerror="this.style.display='none'">` : ''}
         <div class="event-card__header">
           <div class="event-card__date" style="background:${style.bg}">
             <div class="event-card__date-day"   style="color:${style.accent}">${day}</div>
             <div class="event-card__date-month" style="color:${style.accent}">${month}</div>
           </div>
           <div>
-            <p class="event-card__type" style="color:${style.accent}">${ev.event_type || 'Event'}</p>
-            <h3 class="event-card__title">${ev.title}</h3>
+            <p class="event-card__type" style="color:${style.accent}">${esc(ev.event_type || 'Event')}</p>
+            <h3 class="event-card__title">${esc(ev.title)}</h3>
+            ${recurLabel ? `<span class="event-card__recur">🔄 ${esc(recurLabel)} · next ${nextStr}</span>` : ''}
           </div>
         </div>
         <div class="event-card__body">
-          ${ev.description ? `<p class="event-card__desc">${ev.description}</p>` : ''}
+          ${desc ? `<p class="event-card__desc">${shortDesc}</p>` : ''}
+          ${isLong ? `<span class="event-card__seemore" onclick="openEventModal(${idx})">See more →</span>` : ''}
           <div class="event-card__meta">
             <div class="event-card__meta-item">🕙 <span>${time}</span></div>
-            ${ev.location ? `<div class="event-card__meta-item">📍 <span>${ev.location}</span></div>` : ''}
+            ${ev.location ? `<div class="event-card__meta-item">📍 <span>${esc(ev.location)}</span></div>` : ''}
           </div>
         </div>
         <div class="event-card__footer">
-          <span class="event-card__campus">${campus}</span>
+          <span class="event-card__campus">${esc(campus)}</span>
           ${ev.registration_url
-            ? `<a href="${ev.registration_url}" target="_blank" class="event-card__link">Register →</a>`
-            : ''}
+            ? `<a href="${esc(ev.registration_url)}" target="_blank" class="event-card__link">Register →</a>`
+            : `<span class="event-card__link" onclick="openEventModal(${idx})">Details →</span>`}
         </div>
       </div>`;
   }
+
+  // ── Event detail modal ────────────────────────────────────────────────────
+  function openEventModal(idx) {
+    const ev = EVENTS[idx];
+    if (!ev) return;
+    const d     = new Date(ev.starts_at * 1000);
+    const style = styleForType(ev.event_type);
+    const dd = nextOccurrence(ev);
+    const dateStr = dd.toLocaleDateString('en-ZA', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
+    const time    = dd.toLocaleTimeString('en-ZA', { hour:'2-digit', minute:'2-digit' });
+    const recurLabel = recurrenceLabel(ev, dd);
+    document.getElementById('evModalContent').innerHTML = `
+      <button class="ev-modal__close" onclick="closeEventModal()">×</button>
+      ${ev.image_url ? `<img class="ev-modal__image" src="${esc(ev.image_url)}" alt="${esc(ev.title)}" onerror="this.style.display='none'">` : ''}
+      <div class="ev-modal__body">
+        <p class="ev-modal__type" style="color:${style.accent}">${esc(ev.event_type || 'Event')}</p>
+        <h2 class="ev-modal__title">${esc(ev.title)}</h2>
+        <div class="ev-modal__meta">
+          ${recurLabel ? `<div class="ev-modal__meta-item">🔄 <span>${esc(recurLabel)}</span></div>` : ''}
+          <div class="ev-modal__meta-item">📅 <span>${recurLabel ? 'Next: ' : ''}${dateStr}</span></div>
+          <div class="ev-modal__meta-item">🕙 <span>${time}</span></div>
+          ${ev.location ? `<div class="ev-modal__meta-item">📍 <span>${esc(ev.location)}</span></div>` : ''}
+          <div class="ev-modal__meta-item">⛪ <span>${esc(ev.campus || 'Both Campuses')}</span></div>
+        </div>
+        ${ev.description ? `<p class="ev-modal__desc">${esc(ev.description)}</p>` : ''}
+        ${ev.registration_url ? `<a href="${esc(ev.registration_url)}" target="_blank" class="ev-modal__register">Register for this event →</a>` : ''}
+      </div>`;
+    document.getElementById('evModal').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeEventModal() {
+    document.getElementById('evModal').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+  window.openEventModal = openEventModal;
+  window.closeEventModal = closeEventModal;
 
   // ── Filter chip logic (works on dynamic cards) ────────────────────────────
   function attachFilters() {
@@ -304,7 +409,8 @@
         return;
       }
 
-      grid.innerHTML = evs.map(renderCard).join('');
+      EVENTS = evs;
+      grid.innerHTML = evs.map((ev, i) => renderCard(ev, i)).join('');
       attachFilters();
 
     } catch (_) {
@@ -319,5 +425,8 @@
 
   loadEvents();
 </script>
+<div class="ev-modal-overlay" id="evModal" onclick="if(event.target===this)closeEventModal()">
+  <div class="ev-modal" id="evModalContent"></div>
+</div>
 </body>
 </html>
