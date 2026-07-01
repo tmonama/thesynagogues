@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Event Check-In · The Synagogues JWC</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    :root { --green:#2e4801; --green-mid:#456a02; --gold:#e8b84b; --bg:#fafaf6; --text:#1a180e; --muted:#7a7860; --border:#e8e4da; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: Georgia, 'Times New Roman', serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+    .scan-wrap { max-width: 520px; margin: 0 auto; padding: 20px 16px 60px; }
+    .scan-header { background: var(--green); border-radius: 14px 14px 0 0; padding: 24px 28px; text-align: center; }
+    .scan-header h1 { color: var(--gold); font-weight: 400; font-size: 22px; }
+    .scan-header p { color: rgba(255,255,255,0.6); font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; margin-top: 4px; }
+    .scan-body { background: #fff; border: 1px solid var(--border); border-top: none; border-radius: 0 0 14px 14px; padding: 24px; }
+    .event-name { font-size: 20px; font-weight: 600; color: var(--green); text-align: center; margin-bottom: 4px; }
+    .event-meta { font-size: 13px; color: var(--muted); text-align: center; margin-bottom: 20px; }
+    #reader { width: 100%; border-radius: 12px; overflow: hidden; border: 2px solid var(--green); background: #000; min-height: 280px; }
+    .hint { font-size: 13px; color: var(--muted); text-align: center; margin: 14px 0; line-height: 1.6; }
+    .result { padding: 16px; border-radius: 10px; text-align: center; margin-top: 16px; font-size: 15px; font-weight: 600; display: none; }
+    .result.ok { display: block; background: #f0f8e8; color: var(--green); border: 1px solid #c5e0a5; }
+    .result.err { display: block; background: #fdecea; color: #b3261e; border: 1px solid #f5c2bd; }
+    .count { text-align: center; margin-top: 18px; font-size: 14px; color: var(--muted); }
+    .count strong { color: var(--green); font-size: 22px; display: block; font-weight: 700; }
+    .manual { margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--border); }
+    .manual input { width: 100%; padding: 11px 14px; border: 1px solid var(--border); border-radius: 10px; font-size: 14px; font-family: inherit; outline: none; }
+    .manual input:focus { border-color: var(--green-mid); }
+    .start-btn { display: block; width: 100%; padding: 14px; background: var(--green); color: #fff; border: none; border-radius: 10px; font-size: 16px; font-weight: 600; font-family: inherit; cursor: pointer; margin-bottom: 8px; }
+    .error-state { text-align: center; padding: 60px 20px; color: var(--muted); }
+    .error-state .icon { font-size: 44px; margin-bottom: 16px; }
+  </style>
+</head>
+<body>
+  <div class="scan-wrap">
+    <div class="scan-header">
+      <h1>The Synagogues JWC</h1>
+      <p>Event Check-In</p>
+    </div>
+    <div class="scan-body" id="body">
+      <div class="hint">Loading…</div>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.3.8/html5-qrcode.min.js"></script>
+  <script src="config.js"></script>
+  <script>
+    const API = (window.CONFIG && CONFIG.API) || 'https://campushub-api-8x2k.onrender.com';
+    const params = new URLSearchParams(location.search);
+    const eventId = params.get('event');
+    const code    = params.get('code');
+    const body = document.getElementById('body');
+    let checkedCount = 0;
+    let scanner = null;
+    const recent = { code: null, at: 0 };
+
+    const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+    function parseMemberId(val) {
+      let id = val;
+      try { const u = new URL(val); id = u.searchParams.get('id') || val; } catch (_) {}
+      return id.trim();
+    }
+
+    async function init() {
+      if (!eventId || !code) { showError('This check-in link is incomplete.'); return; }
+      try {
+        const r = await fetch(`${API}/api/content/events/${eventId}/scanner-info?code=${encodeURIComponent(code)}`);
+        if (!r.ok) { const e = await r.json().catch(()=>({})); showError(e.error || 'This link is invalid or has expired.'); return; }
+        const info = await r.json();
+        renderScanner(info.event, info.occurrence_date);
+      } catch (e) { showError('Could not connect. Please check your internet connection.'); }
+    }
+
+    function showError(msg) {
+      body.innerHTML = `<div class="error-state"><div class="icon">⚠️</div><p>${esc(msg)}</p></div>`;
+    }
+
+    function renderScanner(event, occurrenceDate) {
+      const d = occurrenceDate ? new Date(occurrenceDate * 1000) : (event.event_date ? new Date(event.event_date * 1000) : null);
+      const dateStr = d ? d.toLocaleDateString('en-ZA', { weekday:'long', day:'numeric', month:'long' }) : '';
+      body.innerHTML = `
+        <div class="event-name">${esc(event.title)}</div>
+        <div class="event-meta">${dateStr}${event.location ? ' · ' + esc(event.location) : ''}</div>
+        <button class="start-btn" id="startBtn">📷 Start scanning</button>
+        <div id="reader" style="display:none"></div>
+        <div class="hint" id="hint" style="display:none">Point the camera at a member's QR code</div>
+        <div class="result" id="result"></div>
+        <div class="count">Checked in this session<strong id="count">0</strong></div>
+        <div class="manual">
+          <input id="manualInput" placeholder="Or type a member ID and press Enter" autocomplete="off">
+        </div>`;
+
+      document.getElementById('startBtn').addEventListener('click', startCamera);
+      document.getElementById('manualInput').addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && e.target.value.trim()) { checkIn(e.target.value.trim()); e.target.value=''; }
+      });
+    }
+
+    async function startCamera() {
+      document.getElementById('startBtn').style.display = 'none';
+      document.getElementById('reader').style.display = 'block';
+      document.getElementById('hint').style.display = 'block';
+      try {
+        scanner = new Html5Qrcode('reader');
+        await scanner.start({ facingMode: 'environment' }, { fps: 10, qrbox: { width: 230, height: 230 } },
+          (decoded) => {
+            const now = Date.now();
+            if (recent.code === decoded && now - recent.at < 3000) return;
+            recent.code = decoded; recent.at = now;
+            checkIn(decoded);
+          }, () => {});
+      } catch (e) {
+        showResult('Camera could not start. Check camera permissions, or use manual entry below.', false);
+        document.getElementById('startBtn').style.display = 'block';
+      }
+    }
+
+    async function checkIn(rawValue) {
+      const memberId = parseMemberId(rawValue);
+      if (!memberId) return;
+      try {
+        const r = await fetch(`${API}/api/content/events/${eventId}/public-check-in`, {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ code, member_id: memberId }),
+        });
+        const data = await r.json();
+        if (!r.ok) { showResult(data.error || 'Check-in failed', false); return; }
+        if (data.duplicate) { showResult(`${data.member.name} already checked in`, true); return; }
+        checkedCount++;
+        document.getElementById('count').textContent = checkedCount;
+        showResult(`✓ ${data.member.name} checked in`, true);
+      } catch (e) { showResult('Connection error — try again', false); }
+    }
+
+    function showResult(msg, ok) {
+      const el = document.getElementById('result');
+      if (!el) return;
+      el.textContent = msg;
+      el.className = 'result ' + (ok ? 'ok' : 'err');
+      clearTimeout(el._t);
+      el._t = setTimeout(() => { el.className = 'result'; }, 3500);
+    }
+
+    init();
+  </script>
+</body>
+</html>
