@@ -18,6 +18,10 @@
     .event-name { font-size: 20px; font-weight: 600; color: var(--green); text-align: center; margin-bottom: 4px; }
     .event-meta { font-size: 13px; color: var(--muted); text-align: center; margin-bottom: 20px; }
     #reader { width: 100%; border-radius: 12px; overflow: hidden; border: 2px solid var(--green); background: #000; min-height: 280px; }
+    .zoom-control { display: none; align-items: center; gap: 10px; margin: 12px 2px 0; }
+    .zoom-control label { color: var(--muted); font-size: 13px; font-weight: 600; }
+    .zoom-control input { flex: 1; accent-color: var(--green-mid); }
+    .zoom-value { min-width: 38px; color: var(--green); font-size: 13px; font-weight: 700; text-align: right; }
     .hint { font-size: 13px; color: var(--muted); text-align: center; margin: 14px 0; line-height: 1.6; }
     .result { padding: 16px; border-radius: 10px; text-align: center; margin-top: 16px; font-size: 15px; font-weight: 600; display: none; }
     .result.ok { display: block; background: #f0f8e8; color: var(--green); border: 1px solid #c5e0a5; }
@@ -85,7 +89,12 @@
         <div class="event-meta">${dateStr}${event.location ? ' · ' + esc(event.location) : ''}</div>
         <button class="start-btn" id="startBtn">📷 Start scanning</button>
         <div id="reader" style="display:none"></div>
-        <div class="hint" id="hint" style="display:none">Point the camera at a member's QR code</div>
+        <div class="zoom-control" id="zoomControl">
+          <label for="zoomSlider">Zoom</label>
+          <input type="range" id="zoomSlider" min="1" max="1" step="0.1" value="1" aria-label="Camera zoom">
+          <span class="zoom-value" id="zoomValue">1.0×</span>
+        </div>
+        <div class="hint" id="hint" style="display:none">Centre the QR code, then move closer or increase zoom</div>
         <div class="result" id="result"></div>
         <div class="count">Checked in this session<strong id="count">0</strong></div>
         <div class="manual">
@@ -103,18 +112,84 @@
       document.getElementById('reader').style.display = 'block';
       document.getElementById('hint').style.display = 'block';
       try {
-        scanner = new Html5Qrcode('reader');
-        await scanner.start({ facingMode: 'environment' }, { fps: 10, qrbox: { width: 230, height: 230 } },
+        const scannerOptions = window.Html5QrcodeSupportedFormats
+          ? { formatsToSupport: [Html5QrcodeSupportedFormats.QR_CODE], verbose: false }
+          : { verbose: false };
+        scanner = new Html5Qrcode('reader', scannerOptions);
+        await scanner.start(
+          { facingMode: 'environment' },
+          {
+            fps: 15,
+            qrbox: (viewfinderWidth, viewfinderHeight) => {
+              const size = Math.floor(Math.min(viewfinderWidth, viewfinderHeight) * 0.85);
+              return { width: size, height: size };
+            },
+            aspectRatio: 1.777778,
+            videoConstraints: {
+              facingMode: { ideal: 'environment' },
+              width: { ideal: 1920 },
+              height: { ideal: 1080 },
+            },
+          },
           (decoded) => {
             const now = Date.now();
             if (recent.code === decoded && now - recent.at < 3000) return;
             recent.code = decoded; recent.at = now;
             checkIn(decoded);
-          }, () => {});
+          }, () => {}
+        );
+
+        // Improve tiny-code capture on phones that expose focus and zoom controls.
+        // Unsupported constraints are ignored so the scanner still works everywhere.
+        try {
+          const capabilities = scanner.getRunningTrackCapabilities?.() || {};
+          const preferred = {};
+          if ((capabilities.focusMode || []).includes('continuous')) {
+            preferred.focusMode = 'continuous';
+          }
+          if (capabilities.zoom && capabilities.zoom.max > capabilities.zoom.min) {
+            const min = capabilities.zoom.min ?? 1;
+            const max = capabilities.zoom.max ?? min;
+            const step = capabilities.zoom.step || 0.1;
+            const initial = Math.min(max, Math.max(min, 2));
+            preferred.zoom = initial;
+            setupZoomControl(min, max, step, initial);
+          }
+          if (Object.keys(preferred).length) {
+            await scanner.applyVideoConstraints({ advanced: [preferred] });
+          }
+        } catch (_) {
+          document.getElementById('zoomControl').style.display = 'none';
+        }
       } catch (e) {
         showResult('Camera could not start. Check camera permissions, or use manual entry below.', false);
         document.getElementById('startBtn').style.display = 'block';
       }
+    }
+
+    function setupZoomControl(min, max, step, initial) {
+      const control = document.getElementById('zoomControl');
+      const slider = document.getElementById('zoomSlider');
+      const value = document.getElementById('zoomValue');
+      slider.min = min;
+      slider.max = max;
+      slider.step = step;
+      slider.value = initial;
+      value.textContent = Number(initial).toFixed(1) + '×';
+      control.style.display = 'flex';
+
+      slider.oninput = async () => {
+        const zoom = Number(slider.value);
+        value.textContent = zoom.toFixed(1) + '×';
+        try {
+          const capabilities = scanner?.getRunningTrackCapabilities?.() || {};
+          const constraints = { zoom };
+          if ((capabilities.focusMode || []).includes('continuous')) {
+            constraints.focusMode = 'continuous';
+          }
+          await scanner?.applyVideoConstraints({ advanced: [constraints] });
+        } catch (_) {}
+      };
     }
 
     async function checkIn(rawValue) {
