@@ -3,7 +3,7 @@
 
 const CONFIG = {
   // CampusHub backend API
-  API: 'https://campushub-api-8x2k.onrender.com',
+  API: 'https://api.thesynagogues.com',
 
   // Podcast RSS feed
   RSS_FEED: 'https://media.rss.com/words-of-wisdom-with-apostle-glen-monama/feed.xml',
