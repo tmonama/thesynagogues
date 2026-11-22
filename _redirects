@@ -1,0 +1,4 @@
+# Cloudflare Pages redirects
+# The posters print /prophetic-conference, so send that address to the event page too.
+/prophetic-conference   /prophetic-service   301
+/prophetic-week         /prophetic-service   301
