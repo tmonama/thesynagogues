@@ -1,6 +1,5 @@
 # Cloudflare Pages redirects
-# The posters print /prophetic-conference, so send that address to the event page too.
-/prophetic-conference   /prophetic-conference   301
-/prophetic-week         /prophetic-conference   301
+# The event page lives at /prophetic-conference (file: prophetic-conference.html).
+# Send the other addresses there.
 /prophetic-service      /prophetic-conference   301
-
+/prophetic-week         /prophetic-conference   301
