@@ -5,14 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Thus Saith the Lord — Six Nights of Prophetic Services · The Synagogues JWC</title>
   <meta name="description" content="Thus Saith the Lord: six nights of prophetic services with Apostle Glen Monama, Prophet W.R. Masango and Prophet Fredrick Andoh. 1–6 December 2026, 6 PM nightly, The Synagogues JWC, Vereeniging. Entrance free."/>
-  <link rel="canonical" href="https://thesynagogues.com/prophetic-service"/>
+  <link rel="canonical" href="https://thesynagogues.com/prophetic-conference"/>
 
   <!-- Link previews (WhatsApp, Facebook, X) -->
   <meta property="og:type" content="website"/>
   <meta property="og:site_name" content="The Synagogues JWC"/>
   <meta property="og:title" content="Thus Saith the Lord — Six Nights of Prophetic Services"/>
   <meta property="og:description" content="1–6 December 2026 · 6 PM every evening · The Synagogues JWC, Vereeniging · Entrance free"/>
-  <meta property="og:url" content="https://thesynagogues.com/prophetic-service"/>
+  <meta property="og:url" content="https://thesynagogues.com/prophetic-conference"/>
   <meta property="og:image" content="https://thesynagogues.com/assets/prophetic/share.jpg?v=2"/>
   <meta property="og:image:width" content="1200"/>
   <meta property="og:image:height" content="630"/>
@@ -53,11 +53,12 @@
     .btn--ghost { background:transparent; color:var(--cream); border:1px solid rgba(255,246,230,.4); }
     .btn--ghost:hover { background:rgba(255,246,230,.08); border-color:var(--cream); }
 
-    .pw-hero__art { position:relative; height: min(72vh, 660px); -webkit-mask-image: linear-gradient(180deg,#000 72%,transparent 100%); mask-image: linear-gradient(180deg,#000 72%,transparent 100%); }
+    .pw-hero__art { position:relative; height: min(72vh, 660px); }
+    .pw-hero__art img { -webkit-mask-image: linear-gradient(180deg,#000 70%,transparent 100%); mask-image: linear-gradient(180deg,#000 70%,transparent 100%); }
     .pw-hero__art img { position:absolute; bottom:0; object-fit:contain; object-position:center bottom; }
     .pw-hero__prophet { width:44%; height:66%; filter:brightness(.82) drop-shadow(0 16px 30px rgba(0,0,0,.5)); }
-    .pw-hero__prophet--l { left:-6%; object-position:left bottom !important; }
-    .pw-hero__prophet--r { right:-8%; object-position:right bottom !important; }
+    .pw-hero__prophet--l { left:-2%; object-position:left bottom !important; }
+    .pw-hero__prophet--r { right:-2%; object-position:right bottom !important; }
     .pw-hero__apostle { left:50%; transform:translateX(-50%); width:66%; height:94%; filter:saturate(1.3) contrast(1.04) drop-shadow(0 0 34px rgba(224,140,60,.35)) drop-shadow(0 20px 40px rgba(0,0,0,.6)); }
     
     /* ── Countdown ── */
@@ -236,13 +237,13 @@
             </div>
           </div>
           <a href="#visit" class="btn btn--ghost">Plan Your Visit</a>
-          <a href="#live" class="btn btn--ghost">Watch Live</a>
+          <a href="https://www.youtube.com/@edah.tv1" target="_blank" rel="noopener" class="btn btn--ghost">Watch Live</a>
         </div>
       </div>
 
       <div class="pw-hero__art" aria-hidden="true">
-        <img class="pw-hero__prophet pw-hero__prophet--l" src="assets/prophetic/masango.webp?v=2" alt=""/>
-        <img class="pw-hero__prophet pw-hero__prophet--r" src="assets/prophetic/andoh.webp?v=2" alt=""/>
+        <img class="pw-hero__prophet pw-hero__prophet--l" src="assets/prophetic/masango.webp?v=3" alt=""/>
+        <img class="pw-hero__prophet pw-hero__prophet--r" src="assets/prophetic/andoh.webp?v=3" alt=""/>
         <img class="pw-hero__apostle" src="assets/prophetic/apostle.webp?v=2" alt=""/>
       </div>
     </div>
@@ -311,7 +312,7 @@
     </div>
     <div class="pw-ministers stagger">
       <div class="pw-min">
-        <img class="pw-min__img" src="assets/prophetic/masango.webp?v=2" alt="Prophet W.R. Masango" loading="lazy"/>
+        <img class="pw-min__img" src="assets/prophetic/masango.webp?v=3" alt="Prophet W.R. Masango" loading="lazy"/>
         <div class="pw-min__cap"><div class="pw-min__role">Prophet</div><div class="pw-min__name">W.R. Masango</div></div>
       </div>
       <div class="pw-min pw-min--main">
@@ -319,7 +320,7 @@
         <div class="pw-min__cap"><div class="pw-min__role">Apostle</div><div class="pw-min__name">Glen Monama</div></div>
       </div>
       <div class="pw-min">
-        <img class="pw-min__img" src="assets/prophetic/andoh.webp?v=2" alt="Prophet Fredrick Andoh" loading="lazy"/>
+        <img class="pw-min__img" src="assets/prophetic/andoh.webp?v=3" alt="Prophet Fredrick Andoh" loading="lazy"/>
         <div class="pw-min__cap"><div class="pw-min__role">Prophet</div><div class="pw-min__name">Fredrick Andoh</div></div>
       </div>
     </div>
@@ -460,7 +461,7 @@
 const EVENT = {
   title:    'Thus Saith the Lord — Six Nights of Prophetic Services',
   location: 'The Synagogues JWC, Langrand Road, Vereeniging, 1929',
-  url:      'https://thesynagogues.com/prophetic-service',
+  url:      'https://thesynagogues.com/prophetic-conference',
   // 1 Dec 2026, 18:00 South African time (UTC+2)
   firstStart: new Date('2026-12-01T18:00:00+02:00'),
   nights: 6,
@@ -479,11 +480,11 @@ const NIGHTS = [
 
 // RSVP destination — paste your Google Apps Script web app URL here (ends in /exec).
 // If left empty, RSVPs go to the CampusHub contact inbox instead.
-const RSVP_SHEET_URL = '';
+const RSVP_SHEET_URL = 'https://script.google.com/macros/s/AKfycbxzBoie04M9OVcJnUUzft-w8OScWLZhHLJkiWP0Y06o9i-I9VXNYYWfAJHpRtGtmEJR/exec';
 
 // Livestream links — leave url empty ('') to hide a platform.
 const LIVE = [
-  { name: 'YouTube',   handle: 'The Synagogues JWC',  url: '' },
+  { name: 'YouTube',   handle: '@edah.tv1',           url: 'https://www.youtube.com/@edah.tv1' },
   { name: 'Facebook',  handle: '@thesynagogues1',     url: 'https://www.facebook.com/thesynagogues1' },
   { name: 'Instagram', handle: '@thesynagogues.jwc',  url: 'https://www.instagram.com/thesynagogues.jwc' },
   { name: 'TikTok',    handle: 'The Synagogues JWC',  url: '' },
