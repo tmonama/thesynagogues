@@ -12,6 +12,7 @@ function getNav() {
       <li><a href="services.html">Services</a></li>
       <li><a href="events.html">Events</a></li>
       <li><a href="podcast.html">Podcast</a></li>
+      <li><a href="radio.html">Radio</a></li>
       <li><a href="contact.html">Contact</a></li>
       <li><a href="give.html" class="nav__give">Give</a></li>
       <li><a href="https://apostleglenmonama.com" target="_blank" rel="noopener" class="nav__apostle">Apostle's Website ↗</a></li>
@@ -29,6 +30,7 @@ function getNav() {
   <a href="services.html">Services</a>
   <a href="events.html">Events</a>
   <a href="podcast.html">Podcast</a>
+  <a href="radio.html">Radio</a>
   <a href="contact.html">Contact</a>
   <a href="give.html" class="nav__give">Give</a>
   <a href="https://apostleglenmonama.com" target="_blank" rel="noopener" class="nav__apostle">Apostle's Website ↗</a>
@@ -55,6 +57,7 @@ function getFooter() {
           <li><a href="services.html">Services</a></li>
           <li><a href="events.html">Events</a></li>
           <li><a href="podcast.html">Podcast</a></li>
+          <li><a href="radio.html">Radio</a></li>
           <li><a href="contact.html">Contact</a></li>
           <li><a href="give.html">Give Online</a></li>
         </ul>

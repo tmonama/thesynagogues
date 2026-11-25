@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Radio — The Synagogues JWC</title>
+  <meta name="description" content="The Synagogues Radio — 24/7 worship, teaching and prayer, plus live broadcasts from The Synagogues JWC." />
+  <meta property="og:title" content="The Synagogues Radio" />
+  <meta property="og:description" content="24/7 worship, teaching and prayer — live and on demand." />
+  <link rel="preconnect" href="https://radio.thesynagogues.com" />
+  <link rel="stylesheet" href="styles.css"/>
+  <style>
+    /* ── Radio page (scoped with .rd- so it never clashes with styles.css) ── */
+    .rd {
+      --rd-line: rgba(255,255,255,.09);
+      --rd-text: #ffffff;
+      --rd-muted: rgba(255,255,255,.55);
+      --rd-gold: var(--gold-light, #e8b84b);
+      --rd-gold-soft: rgba(200,150,12,.16);
+      --rd-live: #e5484d;
+      position: relative; overflow: hidden;
+      background: linear-gradient(160deg, #0d0c08 0%, #1a180e 40%, #1a2a00 100%);
+      color: var(--rd-text);
+      font-family: var(--font-body, system-ui, sans-serif);
+      padding: calc(var(--nav-h, 72px) + 60px) 0 90px;
+      min-height: 80vh;
+    }
+    .rd *, .rd *::before, .rd *::after { box-sizing: border-box; }
+    .rd-wrap { position: relative; }
+    .rd-orb { position:absolute; border-radius:50%; filter:blur(80px); pointer-events:none; }
+    .rd-orb--1 { width:500px; height:500px; background:radial-gradient(circle,rgba(69,106,2,.25) 0%,transparent 70%); top:-100px; right:-100px; }
+    .rd-orb--2 { width:300px; height:300px; background:radial-gradient(circle,rgba(200,150,12,.12) 0%,transparent 70%); bottom:0; left:15%; }
+    .rd-eyebrow { color: var(--rd-gold); letter-spacing: .2em; text-transform: uppercase; font-size: 11px; font-weight: 500; margin: 0 0 14px; }
+    .rd-h1 { font-family: var(--font-display, Georgia, serif); font-weight: 400; font-size: clamp(40px, 6vw, 72px); line-height: 1.05; margin: 0 0 16px; color: var(--rd-text); }
+    .rd-h1 em { font-style: italic; color: var(--rd-gold); }
+    .rd-lead { color: var(--rd-muted); max-width: 560px; margin: 0 0 40px; font-size: 16px; line-height: 1.8; }
+
+    .rd-grid { display: grid; grid-template-columns: 1.25fr 1fr; gap: 24px; align-items: start; }
+    @media (max-width: 860px) { .rd-grid { grid-template-columns: 1fr; } }
+
+    .rd-card { background: rgba(255,255,255,.04); border: 1px solid var(--rd-line); border-radius: var(--r-xl, 20px); padding: 28px; backdrop-filter: blur(6px); }
+
+    /* Player */
+    .rd-player { position: relative; overflow: hidden; }
+    .rd-status { display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px; border-radius: 999px;
+      font-size: 12px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase;
+      background: var(--rd-gold-soft); color: var(--rd-gold); }
+    .rd-status .rd-dot { width: 8px; height: 8px; border-radius: 50%; background: currentColor; }
+    .rd-status.is-live { background: rgba(229,72,77,.16); color: #ff6b70; }
+    .rd-status.is-live .rd-dot { animation: rdPulse 1.4s infinite; }
+    .rd-status.is-off { background: rgba(255,255,255,.08); color: var(--rd-muted); }
+    @keyframes rdPulse { 0%{box-shadow:0 0 0 0 rgba(229,72,77,.7)} 70%{box-shadow:0 0 0 10px rgba(229,72,77,0)} 100%{box-shadow:0 0 0 0 rgba(229,72,77,0)} }
+
+    .rd-show { font-family: var(--font-display, Georgia, serif); font-size: clamp(30px, 4vw, 40px); font-weight: 500; margin: 18px 0 6px; line-height: 1.1; color: #fff; }
+    .rd-show-desc { color: var(--rd-muted); margin: 0 0 22px; font-size: 15px; }
+
+    .rd-np { display: flex; align-items: center; gap: 14px; padding: 14px 16px; border-radius: 14px; background: rgba(0,0,0,.25); border: 1px solid var(--rd-line); margin-bottom: 26px; }
+    .rd-np-icon { width: 40px; height: 40px; flex: 0 0 40px; border-radius: 10px; display: grid; place-items: center; background: var(--rd-gold-soft); color: var(--rd-gold); }
+    .rd-np-label { font-size: 11px; letter-spacing: .16em; text-transform: uppercase; color: var(--rd-muted); }
+    .rd-np-title { font-weight: 700; font-size: 16px; line-height: 1.35; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+
+    .rd-controls { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; }
+    .rd-play { width: 76px; height: 76px; border-radius: 50%; border: 0; cursor: pointer; flex: 0 0 76px;
+      background: var(--gold, #c8960c); color: #fff; display: grid; place-items: center;
+      box-shadow: 0 10px 30px rgba(200,150,12,.35); transition: transform .15s ease, box-shadow .15s ease; }
+    .rd-play:hover { transform: scale(1.04); }
+    .rd-play:focus-visible { outline: 3px solid #fff; outline-offset: 3px; }
+    .rd-play svg { width: 30px; height: 30px; }
+    .rd-play[data-state="loading"] svg { animation: rdSpin 1s linear infinite; }
+    @keyframes rdSpin { to { transform: rotate(360deg); } }
+
+    .rd-meta { flex: 1 1 180px; min-width: 0; }
+    .rd-meta-main { font-weight: 700; }
+    .rd-meta-sub { color: var(--rd-muted); font-size: 14px; margin-top: 2px; }
+
+    .rd-vol { display: flex; align-items: center; gap: 10px; color: var(--rd-muted); }
+    .rd-vol input { width: 120px; accent-color: var(--rd-gold); }
+    @media (max-width: 520px) { .rd-vol { display: none; } }
+
+    .rd-bars { position: absolute; right: 24px; top: 24px; display: flex; gap: 4px; height: 26px; align-items: flex-end; opacity: 0; transition: opacity .3s; }
+    .rd-bars span { width: 4px; background: var(--rd-gold); border-radius: 2px; animation: rdBar 1s ease-in-out infinite; }
+    .rd-bars span:nth-child(2){animation-delay:.2s} .rd-bars span:nth-child(3){animation-delay:.4s} .rd-bars span:nth-child(4){animation-delay:.1s}
+    .rd-player.is-playing .rd-bars { opacity: 1; }
+    @keyframes rdBar { 0%,100%{height:6px} 50%{height:26px} }
+
+    .rd-msg { margin-top: 16px; font-size: 14px; color: var(--rd-muted); min-height: 20px; }
+
+    /* Schedule */
+    .rd-sched-h { font-family: var(--font-display, Georgia, serif); font-weight: 500; font-size: 26px; margin: 0 0 4px; color: #fff; }
+    .rd-sched-sub { color: var(--rd-muted); font-size: 13px; margin: 0 0 18px; }
+    .rd-sched { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+    .rd-slot { display: grid; grid-template-columns: 64px 1fr; gap: 14px; padding: 12px 14px; border-radius: 12px; border: 1px solid transparent; }
+    .rd-slot-time { font-variant-numeric: tabular-nums; color: var(--rd-gold); font-weight: 700; }
+    .rd-slot-title { font-weight: 700; }
+    .rd-slot-desc { color: var(--rd-muted); font-size: 13px; margin-top: 2px; }
+    .rd-slot.is-now { background: var(--rd-gold-soft); border-color: rgba(200,150,12,.4); }
+    .rd-slot.is-now .rd-slot-title::after { content: "ON AIR"; margin-left: 8px; font-size: 10px; letter-spacing: .14em; padding: 2px 6px; border-radius: 4px; background: var(--gold, #c8960c); color: #fff; vertical-align: 2px; }
+    .rd-slot.is-past { opacity: .5; }
+
+    .rd-extra { margin-top: 24px; display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
+    .rd-extra .rd-card { padding: 20px; }
+    .rd-extra h3 { margin: 0 0 6px; font-size: 16px; font-weight: 500; color: #fff; }
+    .rd-extra p { margin: 0; color: var(--rd-muted); font-size: 14px; line-height: 1.55; }
+    .rd-extra a { color: var(--rd-gold); }
+    #rdStreamLink { word-break: break-all; }
+  </style>
+</head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-GMH7PRJ2EW"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-GMH7PRJ2EW');
+</script>
+<body>
+
+<div id="nav-placeholder"></div>
+
+  <main class="rd" id="radio">
+    <div class="rd-orb rd-orb--1"></div>
+    <div class="rd-orb rd-orb--2"></div>
+    <div class="container rd-wrap">
+      <p class="rd-eyebrow">The Synagogues Radio</p>
+      <h1 class="rd-h1">Worship, the Word<br>&amp; prayer — <em>24/7</em></h1>
+      <p class="rd-lead">Tune in any time for worship, teachings from Apostle Glen Monama and prayer through the night. When a service or programme goes live, you'll hear it here automatically.</p>
+
+      <div class="rd-grid">
+        <!-- Player -->
+        <section class="rd-card rd-player" id="rdPlayer" aria-label="Radio player">
+          <div class="rd-bars" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
+
+          <span class="rd-status" id="rdStatus"><span class="rd-dot"></span><span id="rdStatusText">On air</span></span>
+          <h2 class="rd-show" id="rdShow">The Synagogues Radio</h2>
+          <p class="rd-show-desc" id="rdShowDesc">Loading the schedule…</p>
+
+          <div class="rd-np">
+            <div class="rd-np-icon" aria-hidden="true">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+            </div>
+            <div style="min-width:0">
+              <div class="rd-np-label" id="rdNpLabel">Now playing</div>
+              <div class="rd-np-title" id="rdNowPlaying" aria-live="polite">—</div>
+            </div>
+          </div>
+
+          <div class="rd-controls">
+            <button class="rd-play" id="rdPlay" type="button" aria-label="Play radio" data-state="paused">
+              <svg id="rdIcon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+            </button>
+            <div class="rd-meta">
+              <div class="rd-meta-main" id="rdMetaMain">Tap to listen</div>
+              <div class="rd-meta-sub" id="rdMetaSub">Live from Vereeniging, South Africa</div>
+            </div>
+            <label class="rd-vol">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M11 5 6 9H2v6h4l5 4V5z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/></svg>
+              <span class="sr-only" style="position:absolute;left:-9999px">Volume</span>
+              <input type="range" id="rdVolume" min="0" max="1" step="0.01" value="0.9" />
+            </label>
+          </div>
+          <p class="rd-msg" id="rdMsg" role="status"></p>
+        </section>
+
+        <!-- Schedule -->
+        <section class="rd-card" aria-labelledby="rdSchedH">
+          <h2 class="rd-sched-h" id="rdSchedH">Today's programme</h2>
+          <p class="rd-sched-sub" id="rdSchedSub">South African time (SAST)</p>
+          <ul class="rd-sched" id="rdSchedule"></ul>
+        </section>
+      </div>
+
+      <div class="rd-extra">
+        <div class="rd-card">
+          <h3>Listen in your favourite app</h3>
+          <p>Add this stream address to VLC, a smart speaker or any radio app:<br /><a id="rdStreamLink" href="#">—</a></p>
+        </div>
+        <div class="rd-card">
+          <h3>Live services</h3>
+          <p>Sunday services and special programmes are broadcast live. The player switches to the live broadcast automatically — no need to refresh.</p>
+        </div>
+        <div class="rd-card">
+          <h3>Prayer requests</h3>
+          <p>Need prayer while you listen? <a href="contact.html">Send us a message</a> and our team will pray with you.</p>
+        </div>
+      </div>
+    </div>
+  </main>
+
+<div id="footer-placeholder"></div>
+<script src="layout.js"></script>
+<script src="nav.js"></script>
+
+  <script>
+  (function () {
+    // ── Settings ───────────────────────────────────────────────────────────────
+    var RADIO_HOST   = 'https://radio.thesynagogues.com';
+    var STREAM_URL   = RADIO_HOST + '/live';
+    var STATUS_URL   = RADIO_HOST + '/status-json.xsl';
+    var SCHEDULE_URL = RADIO_HOST + '/schedule.json';
+    var TIMEZONE     = 'Africa/Johannesburg';
+    var POLL_MS      = 10000;
+    var STATION      = 'The Synagogues Radio';
+    var ARTWORK      = 'assets/logo.png';   // shown on phone lock screens; change if your logo lives elsewhere
+
+    // ── Elements ───────────────────────────────────────────────────────────────
+    var $ = function (id) { return document.getElementById(id); };
+    var playerEl = $('rdPlay'), iconEl = $('rdIcon'), cardEl = $('rdPlayer');
+    var statusEl = $('rdStatus'), statusTextEl = $('rdStatusText');
+    var showEl = $('rdShow'), showDescEl = $('rdShowDesc');
+    var npEl = $('rdNowPlaying'), npLabelEl = $('rdNpLabel');
+    var metaMainEl = $('rdMetaMain'), metaSubEl = $('rdMetaSub');
+    var msgEl = $('rdMsg'), volEl = $('rdVolume'), schedEl = $('rdSchedule');
+
+    $('rdStreamLink').href = STREAM_URL;
+    $('rdStreamLink').textContent = STREAM_URL;
+
+    var ICONS = {
+      play:    '<path d="M8 5v14l11-7z"/>',
+      pause:   '<path d="M7 5h4v14H7zM13 5h4v14h-4z"/>',
+      loading: '<path d="M12 3a9 9 0 1 0 9 9h-2.2A6.8 6.8 0 1 1 12 5.2z"/>'
+    };
+
+    // ── State ──────────────────────────────────────────────────────────────────
+    var audio = new Audio();
+    audio.preload = 'none';
+    var wantPlaying = false;
+    var retryTimer = null, retryCount = 0;
+    var schedule = null, isLive = false, liveTitle = '', nowTitle = '', listeners = null, online = true;
+
+    try { var v = localStorage.getItem('rdVolume'); if (v !== null) volEl.value = v; } catch (e) {}
+    audio.volume = parseFloat(volEl.value);
+
+    // ── Helpers ────────────────────────────────────────────────────────────────
+    function setButton(state) {
+      playerEl.dataset.state = state;
+      iconEl.innerHTML = ICONS[state === 'playing' ? 'pause' : state === 'loading' ? 'loading' : 'play'];
+      playerEl.setAttribute('aria-label', state === 'playing' ? 'Pause radio' : 'Play radio');
+      cardEl.classList.toggle('is-playing', state === 'playing');
+    }
+    function say(text) { msgEl.textContent = text || ''; }
+
+    function sastNow() {
+      var parts = new Intl.DateTimeFormat('en-GB', { timeZone: TIMEZONE, hour: '2-digit', minute: '2-digit', weekday: 'short', hour12: false })
+        .formatToParts(new Date());
+      var get = function (t) { var p = parts.find(function (x) { return x.type === t; }); return p ? p.value : ''; };
+      var hh = get('hour') === '24' ? '00' : get('hour');
+      return { time: hh + ':' + get('minute'), dow: get('weekday').toLowerCase().slice(0, 3) };
+    }
+
+    // Same rules as the server's next-track.sh: day-specific slots win at equal start times.
+    function todaysSlots(dow) {
+      if (!schedule || !schedule.slots) return [];
+      var rows = schedule.slots.filter(function (s) { return !s.days || !s.days.length || s.days.indexOf(dow) !== -1; });
+      rows.sort(function (a, b) {
+        var aS = a.days && a.days.length ? 1 : 0, bS = b.days && b.days.length ? 1 : 0;
+        return a.start < b.start ? -1 : a.start > b.start ? 1 : aS - bS;
+      });
+      var out = [];   // one slot per start time (the day-specific one if both exist)
+      rows.forEach(function (s) { if (out.length && out[out.length - 1].start === s.start) out[out.length - 1] = s; else out.push(s); });
+      return out;
+    }
+    function currentSlot(slots, time) {
+      var cur = null;
+      slots.forEach(function (s) { if (s.start <= time) cur = s; });
+      return cur || slots[slots.length - 1] || null;
+    }
+
+    // ── Render ─────────────────────────────────────────────────────────────────
+    function render() {
+      var now = sastNow();
+      var slots = todaysSlots(now.dow);
+      var cur = currentSlot(slots, now.time);
+      var next = cur ? slots[slots.indexOf(cur) + 1] : null;
+
+      // Status badge + headline
+      statusEl.classList.toggle('is-live', isLive && online);
+      statusEl.classList.toggle('is-off', !online);
+      if (!online) {
+        statusTextEl.textContent = 'Off air';
+        showEl.textContent = STATION;
+        showDescEl.textContent = "We're having trouble reaching the radio right now. Please try again shortly.";
+      } else if (isLive) {
+        statusTextEl.textContent = 'Live now';
+        showEl.textContent = liveTitle || 'Live broadcast';
+        showDescEl.textContent = 'Broadcasting live from The Synagogues JWC';
+      } else {
+        statusTextEl.textContent = 'On air';
+        showEl.textContent = cur ? cur.title : STATION;
+        showDescEl.textContent = cur ? (cur.description || '') + (next ? ' · Up next at ' + next.start + ': ' + next.title : '') : '';
+      }
+
+      npLabelEl.textContent = isLive ? 'Live' : 'Now playing';
+      npEl.textContent = (isLive ? (liveTitle || 'Live broadcast') : nowTitle) || '—';
+
+      if (!wantPlaying) {
+        metaMainEl.textContent = 'Tap to listen';
+        metaSubEl.textContent = listeners ? listeners + ' listening now' : 'Live from Vereeniging, South Africa';
+      } else {
+        metaMainEl.textContent = isLive ? 'Listening live' : 'Listening to ' + (cur ? cur.title : STATION);
+        metaSubEl.textContent = listeners ? listeners + ' listening now' : STATION;
+      }
+
+      // Schedule list
+      schedEl.innerHTML = '';
+      if (!slots.length) {
+        schedEl.innerHTML = '<li class="rd-slot"><span class="rd-slot-time">—</span><div><div class="rd-slot-title">Schedule coming soon</div></div></li>';
+      }
+      slots.forEach(function (s, i) {
+        var li = document.createElement('li');
+        var nextStart = slots[i + 1] ? slots[i + 1].start : '24:00';
+        li.className = 'rd-slot' + (s === cur && !isLive ? ' is-now' : '') + (nextStart <= now.time ? ' is-past' : '');
+        li.innerHTML = '<span class="rd-slot-time"></span><div><div class="rd-slot-title"></div><div class="rd-slot-desc"></div></div>';
+        li.querySelector('.rd-slot-time').textContent = s.start;
+        li.querySelector('.rd-slot-title').textContent = s.title;
+        li.querySelector('.rd-slot-desc').textContent = s.description || '';
+        schedEl.appendChild(li);
+      });
+
+      updateMediaSession(cur);
+    }
+
+    function updateMediaSession(cur) {
+      if (!('mediaSession' in navigator) || typeof MediaMetadata === 'undefined') return;
+      navigator.mediaSession.metadata = new MediaMetadata({
+        title: (isLive ? (liveTitle || 'Live broadcast') : nowTitle) || (cur ? cur.title : STATION),
+        artist: isLive ? 'LIVE · ' + STATION : STATION,
+        album: cur ? cur.title : STATION,
+        artwork: [{ src: ARTWORK, sizes: '512x512', type: 'image/png' }]
+      });
+    }
+
+    // ── Data ───────────────────────────────────────────────────────────────────
+    function loadSchedule() {
+      return fetch(SCHEDULE_URL, { cache: 'no-store' })
+        .then(function (r) { return r.json(); })
+        .then(function (j) { schedule = j; if (j.station) STATION = j.station; })
+        .catch(function () { /* keep the last copy we had */ });
+    }
+
+    function pollStatus() {
+      return fetch(STATUS_URL, { cache: 'no-store' })
+        .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
+        .then(function (j) {
+          var src = (j.icestats && j.icestats.source) || [];
+          if (!Array.isArray(src)) src = [src];
+          var find = function (mount) { return src.find(function (s) { return s && s.listenurl && s.listenurl.split('?')[0].slice(-mount.length) === mount; }); };
+          // After a presenter disconnects, Icecast keeps an empty "/live" placeholder,
+          // so only count it as live when it has a real broadcast start time.
+          var live = find('/live'), auto = find('/autodj');
+          if (live && !live.stream_start && !live.stream_start_iso8601) live = null;
+          online = !!(live || auto);
+          isLive = !!live;
+          liveTitle = live ? (live.title || live.server_name || '') : '';
+          if (liveTitle === 'The Synagogues Radio') liveTitle = '';
+          nowTitle = auto ? (auto.title || '') : '';
+          var total = (live ? (live.listeners || 0) : 0) + (auto ? (auto.listeners || 0) : 0);
+          listeners = total > 0 ? total : null;
+        })
+        .catch(function () { online = false; })
+        .then(render);
+    }
+
+    // ── Playback ───────────────────────────────────────────────────────────────
+    function start() {
+      clearTimeout(retryTimer);
+      wantPlaying = true;
+      setButton('loading');
+      say('');
+      // A fresh URL each time makes sure we join the broadcast "now", not from an old buffer.
+      audio.src = STREAM_URL + '?t=' + Date.now();
+      var p = audio.play();
+      if (p && p.catch) p.catch(function (err) {
+        if (err && err.name === 'NotAllowedError') { wantPlaying = false; setButton('paused'); say('Tap play to start listening.'); }
+        else { scheduleRetry(); }
+      });
+      render();
+    }
+
+    function stop() {
+      wantPlaying = false;
+      clearTimeout(retryTimer);
+      retryCount = 0;
+      audio.pause();
+      audio.removeAttribute('src');
+      audio.load();               // closes the connection so it doesn't keep downloading
+      setButton('paused');
+      say('');
+      render();
+    }
+
+    function scheduleRetry() {
+      if (!wantPlaying) return;
+      setButton('loading');
+      var delay = Math.min(15000, 2000 * Math.pow(1.5, retryCount++));
+      say('Reconnecting…');
+      clearTimeout(retryTimer);
+      retryTimer = setTimeout(function () { if (wantPlaying) start(); }, delay);
+    }
+
+    playerEl.addEventListener('click', function () { wantPlaying ? stop() : start(); });
+    volEl.addEventListener('input', function () {
+      audio.volume = parseFloat(volEl.value);
+      try { localStorage.setItem('rdVolume', volEl.value); } catch (e) {}
+    });
+
+    audio.addEventListener('playing', function () { retryCount = 0; setButton('playing'); say(''); render(); });
+    audio.addEventListener('waiting', function () { if (wantPlaying) setButton('loading'); });
+    audio.addEventListener('error',   function () { if (wantPlaying) scheduleRetry(); });
+    audio.addEventListener('ended',   function () { if (wantPlaying) scheduleRetry(); });
+    audio.addEventListener('stalled', function () {
+      if (!wantPlaying) return;
+      clearTimeout(retryTimer);
+      retryTimer = setTimeout(function () { if (wantPlaying && audio.readyState < 3) start(); }, 8000);
+    });
+    window.addEventListener('online', function () { if (wantPlaying) start(); });
+
+    if ('mediaSession' in navigator) {
+      try {
+        navigator.mediaSession.setActionHandler('play',  function () { if (!wantPlaying) start(); });
+        navigator.mediaSession.setActionHandler('pause', function () { if (wantPlaying) stop(); });
+        navigator.mediaSession.setActionHandler('stop',  function () { if (wantPlaying) stop(); });
+      } catch (e) {}
+    }
+
+    // ── Go ─────────────────────────────────────────────────────────────────────
+    setButton('paused');
+    loadSchedule().then(pollStatus);
+    setInterval(pollStatus, POLL_MS);
+    setInterval(loadSchedule, 10 * 60 * 1000);
+    document.addEventListener('visibilitychange', function () { if (!document.hidden) pollStatus(); });
+  })();
+  </script>
+</body>
+</html>
