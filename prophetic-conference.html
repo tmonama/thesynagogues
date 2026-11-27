@@ -401,6 +401,11 @@
           <div class="pw-field"><label for="rTransport">Do you need transport?</label>
             <select id="rTransport"><option value="No">No, I have my own</option><option value="Yes">Yes, please contact me about the buses</option></select>
           </div>
+          <div class="pw-field" id="rAreaWrap" hidden>
+            <label for="rArea">Where do you live? *</label>
+            <input id="rArea" autocomplete="address-level2" placeholder="Area or suburb, e.g. Sebokeng Zone 7"/>
+            <span style="font-size:12px;color:var(--text-muted)">So Logistics can plan the bus routes and pick-up points.</span>
+          </div>
           <input type="text" id="rWebsite" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0">
           <button class="btn pw-submit" id="rsvpBtn" type="button">I’m Coming</button>
         </div>
@@ -639,15 +644,22 @@ function setupRsvp() {
     document.getElementById('rsvpDone').style.display = 'block';
   };
 
+  const tSel = document.getElementById('rTransport'), areaWrap = document.getElementById('rAreaWrap');
+  tSel.addEventListener('change', () => {
+    areaWrap.hidden = tSel.value !== 'Yes';
+    if (!areaWrap.hidden) document.getElementById('rArea').focus();
+  });
+
   btn.addEventListener('click', async () => {
     err.style.display = 'none';
     const v = id => document.getElementById(id).value.trim();
     const r = {
       firstName: v('rFirst'), lastName: v('rLast'), email: v('rEmail'), phone: v('rPhone'),
-      people: v('rGuests'), transport: v('rTransport'), website: v('rWebsite'),
+      people: v('rGuests'), transport: v('rTransport'), area: v('rTransport') === 'Yes' ? v('rArea') : '', website: v('rWebsite'),
     };
     if (!r.firstName || !r.lastName || !r.email) return showErr('Please fill in your first name, last name and email.');
     if (!/\S+@\S+\.\S+/.test(r.email)) return showErr('Please enter a valid email address.');
+    if (r.transport === 'Yes' && !r.area) return showErr('Please tell us where you live so we can plan your transport.');
     if (r.website) return done();                       // honeypot: silently ignore bots
     btn.disabled = true; btn.textContent = 'Sending…';
 
@@ -668,7 +680,7 @@ function setupRsvp() {
         body: JSON.stringify({
           firstName: r.firstName, lastName: r.lastName, email: r.email, phone: r.phone,
           campus: 'vereeniging', reason: 'visiting',
-          message: `RSVP — Thus Saith the Lord (1–6 Dec 2026). People: ${r.people}. Needs transport: ${r.transport}.`,
+          message: `RSVP — Thus Saith the Lord (1–6 Dec 2026). People: ${r.people}. Needs transport: ${r.transport}${r.area ? ' (from ' + r.area + ')' : ''}.`,
         }),
       });
       const data = await res.json().catch(() => ({}));
